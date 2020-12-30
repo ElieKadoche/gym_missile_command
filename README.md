@@ -13,7 +13,7 @@ This environment does not reproduce an exact version of the Missile Command Atar
 The player musts defend 6 cities from incoming enemy ballistic missiles.
 To do so, he can fire missiles from an anti-missiles battery.
 An episode ends when all enemy missiles or cities are destroyed.
-There are no levels, all episodes have the same difficulty.
+There are no levels, all episodes have the same difficulty and enemy missiles do not split.
 
 ## Reward
 
