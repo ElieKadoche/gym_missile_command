@@ -1,14 +1,25 @@
 # gym_missile_command
 
-Open AI Gym environment of the Missile Command Atari game.
+Open AI Gym environment of the [Missile Command Atari game](https://en.wikipedia.org/wiki/Missile_Command).
 
-## Prerequisites
+## What for?
 
-[Python](https://www.python.org/) 3.6+ installed on your system.
+To easily train and test different bots on the Missile Command Atari game.
+Gym environments are well designed for Reinforcement Learning algorithms.
+This environment does not reproduce an exact version of the Missile Command Atari game but a simplified one.
+
+## The game
+
+The player musts defend 6 cities from incoming enemy ballistic missiles.
+To do so, he can fire missiles from 3 anti-missiles batteries.
+An episode ends when all ennemy missiles or cities are destroyed.
+Reward depends of the number of missiles used and the number of cities remaining.
+There are no levels, all episodes have the same difficulty.
 
 ## Installation
 
-To install, execute the following commands.
+[Python](https://www.python.org/) 3.6+ is required.
+The installation is done with the following commands.
 
 ```shell
 git clone https://github.com/ElieKadoche/gym_missile_command.git
