@@ -13,14 +13,19 @@ This environment does not reproduce an exact version of the Missile Command Atar
 The player musts defend 6 cities from incoming enemy ballistic missiles.
 To do so, he can fire missiles from an anti-missiles battery.
 An episode ends when all enemy missiles or cities are destroyed.
-There are no levels, all episodes have the same difficulty and enemy missiles do not split.
+
+- The anti-missiles battery can not be destroyed.
+- There are no levels, all episodes have the same difficulty.
+- Enemy missiles do not have an explosion radius and do not split.
 
 ## Reward
 
-The reward is one of the most decisive value for the success of an Reinforcement Learning algorithm.
-The reward depends on several variables, each one contributing to a specific wanted skills of the engine.
+The reward is one of the most decisive value for the success of a Reinforcement Learning algorithm.
+The reward depends on several variables, each one contributing to a specific wanted skill of the engine.
+
 - Number of cities remaining, to protect the cities.
-- Number of missiles launched, ti minimize the use of missiles.
+- Number of enemy missiles destroyed, to improve accuracy.
+- Number of missiles launched, to minimize the use of missiles.
 - How long before all cities are destroyed, to last as long as possible before all cities are destroyed.
 
 ## Installation
