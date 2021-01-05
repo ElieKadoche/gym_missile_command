@@ -26,8 +26,14 @@ REWARD_REMAINING_CITY = 10
 # Reward for each destroyed city
 REWARD_DESTROYED_CITY = -10
 
+# Reward for each destroyed enemy missiles
+REWARD_DESTROYED_ENEMEY_MISSILES = 2
+
 # Cities and anti-missile battery
 # ------------------------------------------
+
+# Number of cities to defend (even integer)
+CITIES_NUMBER = 6
 
 # Radius of a city object
 CITY_RADIUS = 27
@@ -39,7 +45,7 @@ BATTERY_RADIUS = 35
 # ------------------------------------------
 
 # The total number of enemy missiles for 1 episode
-ENEMY_MISSILE_TOTAL = 42
+ENEMY_MISSILES_NUMBER = 42
 
 # The probability for an enemy missile to appear at a time step
 ENEMY_MISSILE_PROBA_IN = 0.05
@@ -54,7 +60,7 @@ ENNEMY_MISSILE_SPEED = 7
 # ------------------------------------------
 
 # Total number of available battery missiles
-BATTERY_MISSILE_TOTAL = 30
+BATTERY_MISSILES_NUMBER = 30
 
 # Radius of an battery missile object
 BATTERY_MISSILE_RADIUS = 7
@@ -69,8 +75,9 @@ BATTERY_MISSILE_SPEED = 34
 # ------------------------------------------
 
 COLOR_BACKGROUND = "#000000"
+COLOR_BATTERY = "#ff0ff0"
+COLOR_BATTERY_MISSILE = "#00ff00"
 COLOR_CITY = "#0000ff"
 COLOR_ENEMY_MISSILE = "#ff0000"
-COLOR_BATTERY_MISSILE = "#00ff00"
 COLOR_EXPLOSION = "#ffff00"
-COLOR_BATTERY = "#ff0ff0"
+COLOR_MISSILE_SIGHT = "#ffffff"
