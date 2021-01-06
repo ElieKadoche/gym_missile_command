@@ -14,9 +14,9 @@ class Cities():
         """Initialize cities.
 
         Attributes:
-            cities (numpy array): of size (N, 3) with N the number of cities
-                and 3 corresponding to the following features : x position, y
-                position and integrity level (0 if destroyed else 1).
+            cities (numpy array): of size (N, 3) with N the number of cities.
+                The features are: (0) x position, (1) y position and (2)
+                integrity level (0 if destroyed else 1).
         """
         # First initializations
         # ------------------------------------------
@@ -26,9 +26,6 @@ class Cities():
 
         # Creation of the main numpy array
         self.cities = np.zeros((CONFIG.CITIES_NUMBER, 3), dtype=CONFIG.DTYPE)
-
-        # All cities are well and healthy
-        self.cities[:, 2] = 1.0
 
         # Check for errors
         # ------------------------------------------
@@ -72,5 +69,9 @@ class Cities():
         """Reset cities.
 
         Integrity is reset to 1 for all cities.
+
+        Warning:
+            To fully initialize a Cities object, init function and reset
+            function musts be called.
         """
         self.cities[:, 2] = 1.0
