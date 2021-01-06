@@ -18,16 +18,16 @@ DTYPE = np.float32
 # ------------------------------------------
 
 # Reward for each remaining missile
-REWARD_REMAINING_MISSILE = 5
+REWARD_REMAINING_MISSILE = 5.0
 
 # Reward for each remaining city
-REWARD_REMAINING_CITY = 10
+REWARD_REMAINING_CITY = 10.0
 
 # Reward for each destroyed city
-REWARD_DESTROYED_CITY = -10
+REWARD_DESTROYED_CITY = -10.0
 
 # Reward for each destroyed enemy missiles
-REWARD_DESTROYED_ENEMEY_MISSILES = 2
+REWARD_DESTROYED_ENEMEY_MISSILES = 2.0
 
 # Cities and anti-missile battery
 # ------------------------------------------
@@ -36,10 +36,10 @@ REWARD_DESTROYED_ENEMEY_MISSILES = 2
 CITIES_NUMBER = 6
 
 # Radius of a city object
-CITY_RADIUS = 27
+CITY_RADIUS = 27.0
 
 # Radius of the anti-missile battery object
-BATTERY_RADIUS = 35
+BATTERY_RADIUS = 35.0
 
 # Enemy missiles
 # ------------------------------------------
@@ -51,10 +51,10 @@ ENEMY_MISSILES_NUMBER = 42
 ENEMY_MISSILE_PROBA_IN = 0.05
 
 # Radius of an enemy missile object
-ENEMY_MISSILE_RADIUS = 3
+ENEMY_MISSILE_RADIUS = 3.0
 
 # Enemy missile speed
-ENNEMY_MISSILE_SPEED = 7
+ENNEMY_MISSILE_SPEED = 7.0
 
 # Battery missiles
 # ------------------------------------------
@@ -63,13 +63,13 @@ ENNEMY_MISSILE_SPEED = 7
 BATTERY_MISSILES_NUMBER = 30
 
 # Radius of an battery missile object
-BATTERY_MISSILE_RADIUS = 7
+BATTERY_MISSILE_RADIUS = 7.0
 
 # Maximum explosion radius
-BATTERY_MISSILE_EXPLOSION_RADIUS = 21
+BATTERY_MISSILE_EXPLOSION_RADIUS = 21.0
 
 # Battery missile speed
-BATTERY_MISSILE_SPEED = 34
+BATTERY_MISSILE_SPEED = 34.0
 
 # Colors
 # ------------------------------------------
