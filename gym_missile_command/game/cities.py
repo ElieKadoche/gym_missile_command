@@ -2,8 +2,9 @@
 
 import sys
 
-import gym_missile_command.config as CONFIG
 import numpy as np
+
+import gym_missile_command.config as CONFIG
 
 
 class Cities():
