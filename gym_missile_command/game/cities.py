@@ -50,8 +50,8 @@ class Cities():
 
         # First position, last position and step between cities centers
         start = CONFIG.BATTERY_RADIUS + gap + CONFIG.CITY_RADIUS
-        stop = start + (0.5 * CONFIG.CITIES_NUMBER - 1)
         step = gap + 2 * CONFIG.CITY_RADIUS
+        stop = 0.5 * CONFIG.WIDTH - gap
 
         # Cities on the left side
         self.cities[:CONFIG.CITIES_NUMBER, 0] = -np.arange(start=start,
