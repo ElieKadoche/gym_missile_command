@@ -54,7 +54,7 @@ ENEMY_MISSILE_PROBA_IN = 0.05
 ENEMY_MISSILE_RADIUS = 3.0
 
 # Enemy missile speed
-ENNEMY_MISSILE_SPEED = 7.0
+ENEMY_MISSILE_SPEED = 7.0
 
 # Battery missiles
 # ------------------------------------------

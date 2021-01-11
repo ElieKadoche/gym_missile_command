@@ -39,16 +39,6 @@ class FriendlyMissiles():
         """
         pass
 
-    def reset(self):
-        """Reset friendly missiles.
-
-        Warning:
-            To fully initialize a FriendlyMissiles object, init function and
-            reset function must be called.
-        """
-        self.missiles_movement = np.zeros((0, 6), dtype=CONFIG.DTYPE)
-        self.missiles_explosion = np.zeros((0, 3), dtype=CONFIG.DTYPE)
-
     def launch_missile(self, target):
         """Launch a new missile.
 
@@ -89,6 +79,16 @@ class FriendlyMissiles():
         self.missiles_movement = np.vstack(
             (self.missiles_movement, new_missile))
 
+    def reset(self):
+        """Reset friendly missiles.
+
+        Warning:
+            To fully initialize a FriendlyMissiles object, init function and
+            reset function must be called.
+        """
+        self.missiles_movement = np.zeros((0, 6), dtype=CONFIG.DTYPE)
+        self.missiles_explosion = np.zeros((0, 3), dtype=CONFIG.DTYPE)
+
     def step(self):
         """Go from current step to next one.
 
@@ -115,7 +115,6 @@ class FriendlyMissiles():
         movement_y = np.sign(self.missiles_movement[:, 5]) \
             * np.minimum(np.abs(self.missiles_movement[:, 5]), dy)
 
-        # Take the minimum between the actual speed and the distance to target
         # Step t to step t+1
         self.missiles_movement[:, 0] += movement_x
         self.missiles_movement[:, 1] += movement_y
