@@ -8,11 +8,11 @@ from gym_missile_command.game.batteries import Batteries
 from gym_missile_command.game.cities import Cities
 from gym_missile_command.game.enemy_missiles import EnemyMissiles
 from gym_missile_command.game.friendly_missiles import FriendlyMissiles
+from gym_missile_command.game.target import Target
 
 
 class MissileCommandEnv(gym.Env):
     """Missile Command Gym environment.
-
 
     Attributes:
         NB_ACTIONS (int): the 6 possible actions. (0) do nothing, (1) target
@@ -26,8 +26,12 @@ class MissileCommandEnv(gym.Env):
         """Initialize MissileCommand environment.
 
         Attributes:
-            target (list): of two elements, corresponding the position (x, y)
-                of the target.
+            timestep (int): current timestep, starts from 0.
+
+            reward_timestep (float): reward of the current timestep.
+
+            reward_total (float): reward sum from first timestep to current
+                one.
         """
         super(MissileCommandEnv, self).__init__()
         self.action_space = spaces.Discrete(self.NB_ACTIONS)
@@ -37,17 +41,18 @@ class MissileCommandEnv(gym.Env):
         self.cities = Cities()
         self.enemy_missiles = EnemyMissiles()
         self.friendly_missiles = FriendlyMissiles()
+        self.target = Target()
 
-    def _collisions(self):
-        """Check for collisions.
+    def _collisions_missiles(self):
+        """Check for missiles collisions.
 
-        For all exploding missiles, check if an enemy missiles is destroyed.
+        Check enemy missiles destroyed by friendly exploding missiles.
         """
         # Friendly exploding missiles
         friendly_m = self.friendly_missiles.missiles_explosion
 
         # Enemy missiles current positions
-        enemy_m = self.enemy_missiles.enemy_missiles[:, [0, 1]]
+        enemy_m = self.enemy_missiles.enemy_missiles[:, [2, 3]]
 
         # Align enemy missiles and friendly exploding ones
         friendly_m_dup = np.tile(enemy_m, reps=[enemy_m.shape[0], 1])
@@ -73,19 +78,35 @@ class MissileCommandEnv(gym.Env):
             axis=0,
         )
 
+        # Compute current reward
+        nb_missiles_destroyed = missiles_out.shape[0]
+        self.reward_timestep += CONFIG.REWARD_DESTROYED_ENEMEY_MISSILES * \
+            nb_missiles_destroyed
+
+    def _collisions_cities(self):
+        """Check for cities collisions.
+
+        Check cities destroyed by enemy missiles.
+        """
+        pass
+
     def reset(self):
         """Reset the environment.
 
         Returns:
             observation (numpy.array): the representation of the environment.
         """
+        self.timestep = 0
+        self.reward_total = 0.0
+        self.reward_timestep = 0.0
+
         self.batteries.reset()
         self.cities.reset()
         self.enemy_missiles.reset()
         self.friendly_missiles.reset()
+        self.target.reset()
 
-        # The target
-        self.target = [0.0, CONFIG.HEIGHT / 2]
+        return None
 
     def step(self, action):
         """Go from current step to next one.
@@ -102,17 +123,41 @@ class MissileCommandEnv(gym.Env):
 
             info (dict): additional information on the current time step.
         """
-        self.enemy_missiles.step()
-        self.friendly_missiles.step()
+        # Reset current reward
+        self.reward_timestep = 0.0
 
-        # Move target (actions 1, 2, 3 and 4)
+        _, _, _, can_fire_dict = self.batteries.step(action)
+        _, _, done_cities, _ = self.cities.step(action)
+        _, _, done_enemy_missiles, _ = self.enemy_missiles.step(action)
+        _, _, _, _ = self.friendly_missiles.step(action)
+        _, _, _, _ = self.target.step(action)
+
+        # Launch a new missile
         # ------------------------------------------
 
-        # Launch a new missile (actions 5)
-        # ------------------------------------------
+        if action == 5 and can_fire_dict["can_fire"]:
+            self.friendly_missiles.launch_missile(self.target)
 
         # Check for collisions
         # ------------------------------------------
+
+        self._collisions_missiles()
+        self._collisions_cities()
+
+        # Check if episode is finished
+        # ------------------------------------------
+
+        done = done_cities or done_enemy_missiles
+        if done:
+            nb_remaining_city = self.cities.get_remaining_cities()
+            nb_remaining_missiles = self.batteries.batteries[0, 0]
+
+            self.reward_timestep += \
+                nb_remaining_city * CONFIG.REWARD_REMAINING_CITY + \
+                nb_remaining_missiles * CONFIG.REWARD_REMAINING_MISSILE
+
+        self.reward_total += self.reward_timestep
+        return None, self.reward_timestep, done, None
 
     def render(self, mode="human"):
         """Render the environment."""
