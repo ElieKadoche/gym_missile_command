@@ -17,26 +17,38 @@ DTYPE = np.float32
 # Reward
 # ------------------------------------------
 
-# Reward for each remaining missile
-REWARD_REMAINING_MISSILE = 5.0
-
 # Reward for each remaining city
 REWARD_REMAINING_CITY = 10.0
 
 # Reward for each destroyed city
 REWARD_DESTROYED_CITY = -10.0
 
+# Reward for each remaining missile
+REWARD_REMAINING_MISSILE = 5.0
+
 # Reward for each destroyed enemy missiles
 REWARD_DESTROYED_ENEMEY_MISSILES = 2.0
 
-# Cities and anti-missile battery
+# Target
 # ------------------------------------------
 
-# Number of cities to defend (even integer)
+# Horizontal shifting of the target
+TARGET_VX = 3
+
+# Vertical shifting of the target
+TARGET_VY = 3
+
+# Cities
+# ------------------------------------------
+
+# Number of cities to defend (even integer >= 2)
 CITIES_NUMBER = 6
 
 # Radius of a city object
 CITY_RADIUS = 27.0
+
+# Anti-missile battery
+# ------------------------------------------
 
 # Radius of the anti-missile battery object
 BATTERY_RADIUS = 35.0
