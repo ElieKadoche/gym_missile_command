@@ -42,25 +42,25 @@ class FriendlyMissiles():
     def launch_missile(self, target):
         """Launch a new missile.
 
-        0) Compute speed vectors. 1) Add the new missile.
+        - 0) Compute speed vectors.
+        - 1) Add the new missile.
 
         Notes:
             When executing this function, not forget to decrease the number
             of available missiles of the anti-missiles battery by 1.
 
         Args:
-            target (list): of 2 elements, corresponding to the position (x, y)
-                of the target.
+            target (Target): Target object.
         """
         # Compute speed vectors
         # ------------------------------------------
 
         # Compute norm
-        norm = np.sqrt(np.square(target[0]) + np.square(target[1]))
+        norm = np.sqrt(np.square(target.x) + np.square(target.y))
 
         # Compute unit vectors
-        ux = target[0] / norm
-        uy = target[1] / norm
+        ux = target.x / norm
+        uy = target.y / norm
 
         # Compute speed vectors
         vx = CONFIG.BATTERY_MISSILE_SPEED * ux
@@ -71,7 +71,7 @@ class FriendlyMissiles():
 
         # Create the missile
         new_missile = np.array(
-            [[self.ORIGIN_X, self.ORIGIN_Y, target[0], target[1], vx, vy]],
+            [[self.ORIGIN_X, self.ORIGIN_Y, target.x, target.y, vx, vy]],
             dtype=CONFIG.DTYPE,
         )
 
@@ -89,16 +89,34 @@ class FriendlyMissiles():
         self.missiles_movement = np.zeros((0, 6), dtype=CONFIG.DTYPE)
         self.missiles_explosion = np.zeros((0, 3), dtype=CONFIG.DTYPE)
 
-    def step(self):
+    def step(self, action):
         """Go from current step to next one.
 
-        0) Moving missiles. 1) Exploding missiles. 2) New exploding missiles.
-        3) Remove missiles with full explosion.
+        - 0) Moving missiles.
+        - 1) Exploding missiles.
+        - 2) New exploding missiles.
+        - 3) Remove missiles with full explosion.
+
+        Friendly missiles destroying enemy missiles are checked in the main
+        environment class.
 
         Notes:
             From one step to another, a missile could exceed its final
             position, so we need to do some verification. This issue is due to
             the discrete nature of environment, decomposed in time steps.
+
+        Args:
+            action (int): (0) do nothing, (1) target up, (2) target down, (3)
+                target left, (4) target right, (5) fire missile.
+
+        returns:
+            observation: None.
+
+            reward: None.
+
+            done: None.
+
+            info: None.
         """
         # Moving missiles
         # ------------------------------------------
@@ -166,3 +184,5 @@ class FriendlyMissiles():
 
         self.missiles_explosion = np.delete(
             self.missiles_explosion, full_explosion_indices, axis=0)
+
+        return None, None, None, None

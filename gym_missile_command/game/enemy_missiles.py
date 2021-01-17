@@ -17,11 +17,12 @@ class EnemyMissiles():
         """Initialize missiles.
 
         Attributes:
-            enemy_missiles (numpy array): of size (N, 6)  with N the number of
+            enemy_missiles (numpy array): of size (N, 8)  with N the number of
                 enemy missiles present in the environment. The features are:
                 (0) initial x position, (1) initial y position, (2) current x
-                position, (3) current y position, (4) horizontal speed vx and
-                (5) vertical speed vy.
+                position, (3) current y position, (4) final x position, (5)
+                final y position, (6) horizontal speed vx and (7) vertical
+                speed vy.
 
             nb_missiles_launched (int): the number of enemy missiles launched
                 in the environment.
@@ -31,8 +32,9 @@ class EnemyMissiles():
     def _launch_missile(self):
         """Launch a new missile.
 
-        0) Generate initial and final positions. 1) Compute speed vectors. 2)
-        Add the new missile.
+        - 0) Generate initial and final positions.
+        - 1) Compute speed vectors.
+        - 2) Add the new missile.
         """
         # Generate initial and final positions
         # ------------------------------------------
@@ -43,7 +45,7 @@ class EnemyMissiles():
 
         # Final position
         x1 = random.uniform(-0.5 * CONFIG.WIDTH, 0.5 * CONFIG.WIDTH)
-        y2 = 0.0
+        y1 = 0.0
 
         # Compute speed vectors
         # ------------------------------------------
@@ -82,39 +84,55 @@ class EnemyMissiles():
             To fully initialize a EnemyMissiles object, init function and reset
             function must be called.
         """
-        self.enemy_missiles = np.zeros((0, 6), dtype=CONFIG.DTYPE)
+        self.enemy_missiles = np.zeros((0, 8), dtype=CONFIG.DTYPE)
         self.nb_missiles_launched = 0
 
     def step(self):
         """Go from current step to next one.
 
-        0) Moving missiles. 1) Potentially launch a new missile. 2) Remove
-        missiles that hit the ground.
+        - 0) Moving missiles.
+        - 1) Potentially launch a new missile.
+        - 2) Remove missiles that hit the ground.
 
-        Warning:
-            Collisions with friendly missiles are not checked here.
+        Collisions with friendly missiles and / or cities are checked in the
+        main environment class.
 
         Notes:
             From one step to another, a missile could exceed its final
             position, so we need to do some verification. This issue is due to
             the discrete nature of environment, decomposed in time steps.
+
+        Args:
+            action (int): (0) do nothing, (1) target up, (2) target down, (3)
+                target left, (4) target right, (5) fire missile.
+
+        returns:
+            observation: None.
+
+            reward: None.
+
+            done (bool): True if the episode is finished, i.d. there are no
+                more enemy missiles in the environment and no more enemy
+                missiles to be launch. False otherwise.
+
+            info: None.
         """
         # Moving missiles
         # ------------------------------------------
 
         # Compute horizontal and vertical distances to targets
-        dx = np.abs(self.enemy_missiles[:, 2] - self.enemy_missiles[:, 0])
-        dy = np.abs(self.enemy_missiles[:, 3] - self.enemy_missiles[:, 1])
+        dx = np.abs(self.enemy_missiles[:, 4] - self.enemy_missiles[:, 2])
+        dy = np.abs(self.enemy_missiles[:, 5] - self.enemy_missiles[:, 3])
 
         # Take the minimum between the actual speed and the distance to target
-        movement_x = np.sign(self.enemy_missiles[:, 4]) \
-            * np.minimum(np.abs(self.enemy_missiles[:, 4]), dx)
-        movement_y = np.sign(self.enemy_missiles[:, 5]) \
-            * np.minimum(np.abs(self.enemy_missiles[:, 5]), dy)
+        movement_x = np.sign(self.enemy_missiles[:, 6]) \
+            * np.minimum(np.abs(self.enemy_missiles[:, 6]), dx)
+        movement_y = np.sign(self.enemy_missiles[:, 7]) \
+            * np.minimum(np.abs(self.enemy_missiles[:, 7]), dy)
 
         # Step t to step t+1
-        self.enemy_missiles[:, 0] += movement_x
-        self.enemy_missiles[:, 1] += movement_y
+        self.enemy_missiles[:, 2] += movement_x
+        self.enemy_missiles[:, 3] += movement_y
 
         # Potentially launch a new missile
         # ------------------------------------------
@@ -127,7 +145,13 @@ class EnemyMissiles():
         # ------------------------------------------
 
         missiles_out_indices = np.squeeze(np.argwhere(
-            (self.enemy_missiles[:, 1] < 0.0))
+            (self.enemy_missiles[:, 2] == self.enemy_missiles[:, 4]) &
+            (self.enemy_missiles[:, 3] == self.enemy_missiles[:, 5])
+        ))
 
-        self.enemy_missiles=np.delete(
+        self.enemy_missiles = np.delete(
             self.enemy_missiles, missiles_out_indices, axis=0)
+
+        done = self.enemy_missiles.shape[0] == 0 and \
+            self.nb_missiles_launched == CONFIG.ENEMY_MISSILES_NUMBER
+        return None, None, done, None
