@@ -8,7 +8,14 @@ import gym_missile_command.config as CONFIG
 
 
 class Cities():
-    """Cities class."""
+    """Cities class.
+
+    Attributes:
+        MAX_HEALTH (float): value corresponding to the max health of a city.
+            Each time an enemy missile destroys a city, it loses 1 point of
+            heath. At 0, the city is completely destroyed.
+    """
+    MAX_HEALTH = 1.0
 
     def __init__(self):
         """Initialize cities.
@@ -65,6 +72,14 @@ class Cities():
                                                           step=step,
                                                           dtype=CONFIG.DTYPE)
 
+    def get_remaining_cities(self):
+        """Compute healthy cities number.
+
+        Returns:
+            nb_remaining_cities (int): the number of remaining cities.
+        """
+        return np.sum(self.cities[:, 2] == self.MAX_HEALTH)
+
     def reset(self):
         """Reset cities.
 
@@ -74,4 +89,27 @@ class Cities():
             To fully initialize a Cities object, init function and reset
             function musts be called.
         """
-        self.cities[:, 2] = 1.0
+        self.cities[:, 2] = self.MAX_HEALTH
+
+    def step(self, action):
+        """Go from current step to next one.
+
+        Destructions by enemy missiles are checked in the main environment
+        class.
+
+        Args:
+            action (int): (0) do nothing, (1) target up, (2) target down, (3)
+                target left, (4) target right, (5) fire missile.
+
+        returns:
+            observation: None.
+
+            reward: None.
+
+            done (bool): True if the episode is finished, i.d. all cities are
+                destroyed. False otherwise.
+
+            info: None.
+        """
+        done = np.all(self.cities[:, 2] == 0.0)
+        return None, None, done, None
