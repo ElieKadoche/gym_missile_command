@@ -77,8 +77,8 @@ class MissileCommandEnv(gym.Env):
 
         # Remove theses missiles
         missiles_out = np.argwhere(np.sum(inside_radius, axis=1) >= 1)
-        enemy_missiles = np.delete(
-            enemy_missiles,
+        self.enemy_missiles.enemy_missiles = np.delete(
+            self.enemy_missiles.enemy_missiles,
             np.squeeze(missiles_out),
             axis=0,
         )
@@ -101,6 +101,32 @@ class MissileCommandEnv(gym.Env):
 
         # Enemy missiles current positions
         enemy_m = self.enemy_missiles.enemy_missiles[:, [2, 3]]
+
+        # Align cities and enemy missiles
+        cities_dup = np.repeat(cities, enemy_m.shape[0], axis=0)
+        enemy_m_dup = np.tile(enemy_m, reps=[cities.shape[0], 1])
+
+        # Compute distances
+        dx = enemy_m_dup[:, 0] - cities_dup[:, 0]
+        dy = enemy_m_dup[:, 1] - cities_dup[:, 1]
+        distances = np.sqrt(np.square(dx) + np.square(dy))
+
+        # Get cities destroyed by enemy missiles
+        exploded = distances <= (
+            CONFIG.ENEMY_MISSILE_RADIUS + CONFIG.CITY_RADIUS)
+        exploded = exploded.astype(int)
+        exploded = np.reshape(exploded, (cities.shape[0], enemy_m.shape[0]))
+
+        # Destroy even more these cities
+        cities_out = np.argwhere(
+            (np.sum(exploded, axis=1) >= 1) &
+            (cities[:, 2] > 0.0)
+        )
+        self.cities.cities = np.delete(
+            self.cities.cities,
+            np.squeeze(cities_out),
+            axis=0,
+        )
 
     def reset(self):
         """Reset the environment.
