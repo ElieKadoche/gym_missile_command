@@ -49,34 +49,42 @@ class MissileCommandEnv(gym.Env):
         Check enemy missiles destroyed by friendly exploding missiles.
         """
         # Friendly exploding missiles
-        friendly_m = self.friendly_missiles.missiles_explosion
+        friendly_exploding = self.friendly_missiles.missiles_explosion
 
         # Enemy missiles current positions
-        enemy_m = self.enemy_missiles.enemy_missiles[:, [2, 3]]
+        enemy_missiles = self.enemy_missiles.enemy_missiles[:, [2, 3]]
 
         # Align enemy missiles and friendly exploding ones
-        friendly_m_dup = np.tile(enemy_m, reps=[enemy_m.shape[0], 1])
-        enemy_m_dup = np.repeat(enemy_m, friendly_m.shape[0], axis=0)
+        enemy_m_dup = np.repeat(enemy_missiles,
+                                friendly_exploding.shape[0],
+                                axis=0)
+        friendly_e_dup = np.tile(friendly_exploding,
+                                 reps=[enemy_missiles.shape[0], 1])
 
         # Compute distances
-        dx = friendly_m_dup[:, 0] - enemy_m_dup[:, 0]
-        dy = friendly_m_dup[:, 1] - enemy_m_dup[:, 1]
+        dx = friendly_e_dup[:, 0] - enemy_m_dup[:, 0]
+        dy = friendly_e_dup[:, 1] - enemy_m_dup[:, 1]
         distances = np.sqrt(np.square(dx) + np.square(dy))
 
         # Get enemy missiles inside an explosion radius
         inside_radius = distances <= (
-            friendly_m_dup[:, 2] + CONFIG.ENEMY_MISSILE_RADIUS)
+            friendly_e_dup[:, 2] + CONFIG.ENEMY_MISSILE_RADIUS)
         inside_radius = inside_radius.astype(int)
         inside_radius = np.reshape(
-            inside_radius, (enemy_m.shape[0], friendly_m.shape[0]))
+            inside_radius,
+            (enemy_missiles.shape[0], friendly_exploding.shape[0]),
+        )
 
         # Remove theses missiles
         missiles_out = np.argwhere(np.sum(inside_radius, axis=1) >= 1)
-        self.enemy_missiles.enemy_missiles = np.delete(
-            self.enemy_missiles.enemy_missiles,
+        enemy_missiles = np.delete(
+            enemy_missiles,
             np.squeeze(missiles_out),
             axis=0,
         )
+
+        # Compute current reward
+        nb_missiles_destroyed = missiles_out.shape[0]
 
         # Compute current reward
         nb_missiles_destroyed = missiles_out.shape[0]
@@ -88,7 +96,11 @@ class MissileCommandEnv(gym.Env):
 
         Check cities destroyed by enemy missiles.
         """
-        pass
+        # Cities
+        cities = self.cities.cities
+
+        # Enemy missiles current positions
+        enemy_m = self.enemy_missiles.enemy_missiles[:, [2, 3]]
 
     def reset(self):
         """Reset the environment.
@@ -126,6 +138,7 @@ class MissileCommandEnv(gym.Env):
         # Reset current reward
         self.reward_timestep = 0.0
 
+        # Step functions
         _, _, _, can_fire_dict = self.batteries.step(action)
         _, _, done_cities, _ = self.cities.step(action)
         _, _, done_enemy_missiles, _ = self.enemy_missiles.step(action)
