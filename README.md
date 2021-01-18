@@ -49,6 +49,7 @@ env = gym.make("gym_missile_command:missile-command-v0")
 observation = env.reset()
 done = False
 while not done:
+    action = env.action_space.sample()  # Random agent
     observation, reward, done, _ = env.step(action)
     env.render()
 ```
