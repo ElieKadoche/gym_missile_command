@@ -147,32 +147,38 @@ class FriendlyMissiles():
         # ------------------------------------------
 
         # Indices of new exploding missiles
-        new_exploding_missiles_indices = np.squeeze(np.argwhere(
+        new_exploding_missiles_indices = np.argwhere(
             (self.missiles_movement[:, 0] == self.missiles_movement[:, 2]) &
             (self.missiles_movement[:, 1] == self.missiles_movement[:, 3])
-        ))
-
-        # Get positions
-        x = self.missiles_movement[new_exploding_missiles_indices, 0]
-        y = self.missiles_movement[new_exploding_missiles_indices, 1]
-
-        # Remove missiles
-        self.missiles_movement = np.delete(
-            self.missiles_movement, new_exploding_missiles_indices, axis=0)
-
-        # Create new ones
-        new_exploding_missiles = np.zeros(
-            (new_exploding_missiles_indices.shape[0], 3),
-            dtype=CONFIG.DTYPE,
         )
+        nb_new_exploding_missiles = new_exploding_missiles_indices.shape[0]
+        # print(new_exploding_missiles_indices)
 
-        # Affect positions
-        new_exploding_missiles[:, 0] = x
-        new_exploding_missiles[:, 1] = y
+        if nb_new_exploding_missiles > 0:
+            new_exploding_missiles_indices = np.squeeze(
+                new_exploding_missiles_indices)
 
-        # Add them
-        self.missiles_explosion = np.vstack(
-            (self.missiles_explosion, new_exploding_missiles))
+            # Get positions
+            x = self.missiles_movement[new_exploding_missiles_indices, 0]
+            y = self.missiles_movement[new_exploding_missiles_indices, 1]
+
+            # Remove missiles
+            self.missiles_movement = np.delete(
+                self.missiles_movement, new_exploding_missiles_indices, axis=0)
+
+            # Create new ones
+            new_exploding_missiles = np.zeros(
+                (nb_new_exploding_missiles, 3),
+                dtype=CONFIG.DTYPE,
+            )
+
+            # Affect positions
+            new_exploding_missiles[:, 0] = x
+            new_exploding_missiles[:, 1] = y
+
+            # Add them
+            self.missiles_explosion = np.vstack(
+                (self.missiles_explosion, new_exploding_missiles))
 
         # Remove missiles with full explosion
         # ------------------------------------------

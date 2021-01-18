@@ -1,9 +1,9 @@
 import gym
-import gym_missiles_command.config as CONFIG
 import numpy as np
 from gym import error, spaces, utils
 from gym.utils import seeding
 
+import gym_missile_command.config as CONFIG
 from gym_missile_command.game.batteries import Batteries
 from gym_missile_command.game.cities import Cities
 from gym_missile_command.game.enemy_missiles import EnemyMissiles

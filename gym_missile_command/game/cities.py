@@ -59,18 +59,19 @@ class Cities():
         start = CONFIG.BATTERY_RADIUS + gap + CONFIG.CITY_RADIUS
         step = gap + 2 * CONFIG.CITY_RADIUS
         stop = 0.5 * CONFIG.WIDTH - gap
+        half_cities_nb = int(CONFIG.CITIES_NUMBER / 2)
 
         # Cities on the left side
-        self.cities[:CONFIG.CITIES_NUMBER, 0] = -np.arange(start=start,
-                                                           stop=stop,
-                                                           step=step,
-                                                           dtype=CONFIG.DTYPE)
+        self.cities[:half_cities_nb, 0] = -np.arange(start=start,
+                                                     stop=stop,
+                                                     step=step,
+                                                     dtype=CONFIG.DTYPE)
 
         # Cities on the right side
-        self.cities[CONFIG.CITIES_NUMBER:, 0] = np.arange(start=start,
-                                                          stop=stop,
-                                                          step=step,
-                                                          dtype=CONFIG.DTYPE)
+        self.cities[half_cities_nb:, 0] = np.arange(start=start,
+                                                    stop=stop,
+                                                    step=step,
+                                                    dtype=CONFIG.DTYPE)
 
     def get_remaining_cities(self):
         """Compute healthy cities number.

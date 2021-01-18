@@ -87,7 +87,7 @@ class EnemyMissiles():
         self.enemy_missiles = np.zeros((0, 8), dtype=CONFIG.DTYPE)
         self.nb_missiles_launched = 0
 
-    def step(self):
+    def step(self, action):
         """Go from current step to next one.
 
         - 0) Moving missiles.
@@ -139,7 +139,7 @@ class EnemyMissiles():
 
         if self.nb_missiles_launched < CONFIG.ENEMY_MISSILES_NUMBER:
             if random.random() <= CONFIG.ENEMY_MISSILE_PROBA_IN:
-                self._launch_new_missile()
+                self._launch_missile()
 
         # Remove missiles that hit the ground
         # ------------------------------------------
