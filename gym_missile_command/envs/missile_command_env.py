@@ -1,7 +1,9 @@
+"""Main environment class."""
+
 import gym
 import numpy as np
-from gym import error, spaces, utils
-from gym.utils import seeding
+import pygame
+from gym import spaces
 
 import gym_missile_command.config as CONFIG
 from gym_missile_command.game.batteries import Batteries
@@ -28,13 +30,23 @@ class MissileCommandEnv(gym.Env):
         Attributes:
             timestep (int): current timestep, starts from 0.
 
+            observation (numpy.array): of size (WIDTH, HEIGHT, 3). The
+                observation of the current timestep, representing the RGB
+                values of each pixel.
+
             reward_timestep (float): reward of the current timestep.
 
             reward_total (float): reward sum from first timestep to current
                 one.
+
+            display (pygame.Surface): pygame surface, only for the render
+                method.
         """
         super(MissileCommandEnv, self).__init__()
         self.action_space = spaces.Discrete(self.NB_ACTIONS)
+
+        # No display while no render
+        self.display = None
 
         # Objects
         self.batteries = Batteries()
@@ -42,6 +54,14 @@ class MissileCommandEnv(gym.Env):
         self.enemy_missiles = EnemyMissiles()
         self.friendly_missiles = FriendlyMissiles()
         self.target = Target()
+
+    def _reset_observation(self):
+        """Reset observation."""
+        self.observation = np.zeros(
+            (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=CONFIG.DTYPE)
+        self.observation[:, :, 0] = CONFIG.COLOR_BACKGROUND[0]
+        self.observation[:, :, 1] = CONFIG.COLOR_BACKGROUND[1]
+        self.observation[:, :, 2] = CONFIG.COLOR_BACKGROUND[2]
 
     def _collisions_missiles(self):
         """Check for missiles collisions.
@@ -138,6 +158,8 @@ class MissileCommandEnv(gym.Env):
         self.reward_total = 0.0
         self.reward_timestep = 0.0
 
+        self._reset_observation()
+
         self.batteries.reset()
         self.cities.reset()
         self.enemy_missiles.reset()
@@ -161,10 +183,15 @@ class MissileCommandEnv(gym.Env):
 
             info (dict): additional information on the current time step.
         """
-        # Reset current reward
+        # Reset current reward and observation
+        # ------------------------------------------
+
+        self._reset_observation()
         self.reward_timestep = 0.0
 
         # Step functions
+        # ------------------------------------------
+
         _, _, _, can_fire_dict = self.batteries.step(action)
         _, _, done_cities, _ = self.cities.step(action)
         _, _, done_enemy_missiles, _ = self.enemy_missiles.step(action)
@@ -195,13 +222,32 @@ class MissileCommandEnv(gym.Env):
                 nb_remaining_city * CONFIG.REWARD_REMAINING_CITY + \
                 nb_remaining_missiles * CONFIG.REWARD_REMAINING_MISSILE
 
+        # Render every objects
+        # ------------------------------------------
+
+        self.batteries.render(self.observation)
+        self.cities.render(self.observation)
+        self.enemy_missiles.render(self.observation)
+        self.friendly_missiles.render(self.observation)
+        self.target.render(self.observation)
+
+        # Return everything
+        # ------------------------------------------
+
         self.reward_total += self.reward_timestep
-        return None, self.reward_timestep, done, None
+        return self.observation, self.reward_timestep, done, None
 
     def render(self, mode="human"):
         """Render the environment."""
-        pass
+        if not self.display:
+            self.display = pygame.display.set_mode(
+                (CONFIG.WIDTH, CONFIG.HEIGHT))
+
+        surface = pygame.surfarray.make_surface(self.observation)
+        self.display.blit(surface, (0, 0))
+        pygame.display.update()
 
     def close(self):
         """Close the environment."""
-        pass
+        if self.display:
+            pygame.quit()
