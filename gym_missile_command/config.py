@@ -1,6 +1,7 @@
 """Environment configuration."""
 
 import numpy as np
+from PIL import ImageColor
 
 # General
 # ------------------------------------------
@@ -37,6 +38,9 @@ TARGET_VX = 3
 
 # Vertical shifting of the target
 TARGET_VY = 3
+
+# Target size (only for render)
+TARGET_SIZE = 6
 
 # Cities
 # ------------------------------------------
@@ -86,10 +90,11 @@ BATTERY_MISSILE_SPEED = 34.0
 # Colors
 # ------------------------------------------
 
-COLOR_BACKGROUND = "#000000"
-COLOR_BATTERY = "#ff0ff0"
-COLOR_BATTERY_MISSILE = "#00ff00"
-COLOR_CITY = "#0000ff"
-COLOR_ENEMY_MISSILE = "#ff0000"
-COLOR_EXPLOSION = "#ffff00"
-COLOR_MISSILE_SIGHT = "#ffffff"
+# Keep colors in hex to display them in Vim (vim-css-color) plugin
+COLOR_BACKGROUND = ImageColor.getcolor("#000000", "RGB")
+COLOR_BATTERY = ImageColor.getcolor("#ff0ff0", "RGB")
+COLOR_BATTERY_MISSILE = ImageColor.getcolor("#00ff00", "RGB")
+COLOR_CITY = ImageColor.getcolor("#0000ff", "RGB")
+COLOR_ENEMY_MISSILE = ImageColor.getcolor("#ff0000", "RGB")
+COLOR_EXPLOSION = ImageColor.getcolor("#ffff00", "RGB")
+COLOR_TARGET = ImageColor.getcolor("#ffffff", "RGB")
