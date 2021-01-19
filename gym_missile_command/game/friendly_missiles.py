@@ -1,8 +1,10 @@
 """Friendly missiles."""
 
+import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
+from gym_missile_command.utils import get_render_coordinates
 
 
 class FriendlyMissiles():
@@ -115,7 +117,7 @@ class FriendlyMissiles():
             reward: None.
 
             done: None.
-
+1
             info: None.
         """
         # Moving missiles
@@ -192,3 +194,52 @@ class FriendlyMissiles():
             self.missiles_explosion, full_explosion_indices, axis=0)
 
         return None, None, None, None
+
+    def render(self, observation):
+        """Render friendly missiles.
+
+        Args:
+            observation (numpy.array): the current environment observation
+                representing the pixe1ls. See the object description in the
+                main environment class for information.
+        """
+        # Moving missiles
+        # ------------------------------------------
+
+        x_current = self.missiles_movement[:, 0]
+        y_current = self.missiles_movement[:, 1]
+        get_render_coordinates(x_current, y_current)
+
+        for x, y in zip(x_current, y_current):
+            cv2.line(
+                img=observation,
+                pt1=(int(CONFIG.HEIGHT), int(CONFIG.WIDTH / 2)),
+                pt2=(int(y), int(x)),
+                color=CONFIG.COLOR_BATTERY_MISSILE,
+                thickness=1,
+            )
+
+            cv2.circle(
+                img=observation,
+                center=(int(y), int(x)),
+                radius=int(CONFIG.BATTERY_MISSILE_RADIUS),
+                color=CONFIG.COLOR_BATTERY_MISSILE,
+                thickness=-1,
+            )
+
+        # Exploding missiles
+        # ------------------------------------------
+
+        radiuses = self.missiles_explosion[:, 2]
+        x_current = self.missiles_explosion[:, 0]
+        y_current = self.missiles_explosion[:, 1]
+        get_render_coordinates(x_current, y_current)
+
+        for x, y, explosion in zip(x_current, y_current, radiuses):
+            cv2.circle(
+                img=observation,
+                center=(int(x), int(y)),
+                radius=int(explosion),
+                color=CONFIG.COLOR_EXPLOSION,
+                thickness=-1,
+            )

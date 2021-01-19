@@ -2,9 +2,11 @@
 
 import sys
 
+import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
+from gym_missile_command.utils import get_render_coordinates
 
 
 class Cities():
@@ -76,7 +78,7 @@ class Cities():
     def get_remaining_cities(self):
         """Compute healthy cities number.
 
-        Returns:
+        Returns:opencv draw multiple circles
             nb_remaining_cities (int): the number of remaining cities.
         """
         return np.sum(self.cities[:, 2] == self.MAX_HEALTH)
@@ -114,3 +116,28 @@ class Cities():
         """
         done = np.all(self.cities[:, 2] == 0.0)
         return None, None, done, None
+
+    def render(self, observation):
+        """Render cities.
+
+        Todo:
+            Include the integrity level.
+
+        Args:
+            observation (numpy.array): the current environment observation
+                representing the pixels. See the object description in the main
+                environment class for information.
+        """
+        x_centers = self.cities[:, 0]
+        y_centers = self.cities[:, 1]
+        integrities = self.cities[:, 2]
+        get_render_coordinates(x_centers, y_centers)
+
+        for x, y, integrity in zip(x_centers, y_centers, integrities):
+            cv2.circle(
+                img=observation,
+                center=(int(y), int(x)),
+                radius=int(CONFIG.CITY_RADIUS),
+                color=CONFIG.COLOR_CITY,
+                thickness=-1,
+            )

@@ -2,9 +2,11 @@
 
 import random
 
+import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
+from gym_missile_command.utils import get_render_coordinates
 
 
 class EnemyMissiles():
@@ -155,3 +157,39 @@ class EnemyMissiles():
         done = self.enemy_missiles.shape[0] == 0 and \
             self.nb_missiles_launched == CONFIG.ENEMY_MISSILES_NUMBER
         return None, None, done, None
+
+    def render(self, observation):
+        """Render enemy missiles.
+
+        For each enemy missiles, draw a line of its trajectory and the actual
+        missile.
+
+        Args:
+            observation (numpy.array): the current environment observation
+                representing the pixels. See the object description in the main
+                environment class for information.
+        """
+        x_origin = self.enemy_missiles[:, 0]
+        y_origin = self.enemy_missiles[:, 1]
+        get_render_coordinates(x_origin, y_origin)
+
+        x_current = self.enemy_missiles[:, 2]
+        y_current = self.enemy_missiles[:, 3]
+        get_render_coordinates(x_current, y_current)
+
+        for x0, y0, x, y in zip(x_origin, y_origin, x_current, y_current):
+            cv2.line(
+                img=observation,
+                pt1=(int(y0), int(x0)),
+                pt2=(int(y), int(x)),
+                color=CONFIG.COLOR_ENEMY_MISSILE,
+                thickness=1,
+            )
+
+            cv2.circle(
+                img=observation,
+                center=(int(y), int(x)),
+                radius=int(CONFIG.ENEMY_MISSILE_RADIUS),
+                color=CONFIG.COLOR_ENEMY_MISSILE,
+                thickness=-1,
+            )

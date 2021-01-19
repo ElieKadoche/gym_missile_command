@@ -1,8 +1,10 @@
 """Anti-missiles batteries."""
 
+import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
+from gym_missile_command.utils import get_render_coordinates
 
 
 class Batteries():
@@ -61,3 +63,26 @@ class Batteries():
             self.batteries[0, 0] -= 1
 
         return None, None, None, {"can_fire": can_fire}
+
+    def render(self, observation):
+        """Render anti-missiles batteries.
+
+        Todo:
+            Include the number of available missiles.
+
+        Args:
+            observation (numpy.array): the current environment observation
+                representing the pixels. See the object description in the main
+                environment class for information.
+        """
+        x_current = 0.0
+        y_current = 0.0
+        get_render_coordinates(x_current, y_current)
+
+        cv2.circle(
+            img=observation,
+            center=(int(y_current), int(x_current)),
+            radius=int(CONFIG.BATTERY_RADIUS),
+            color=CONFIG.COLOR_BATTERY,
+            thickness=-1,
+        )
