@@ -55,6 +55,8 @@ python machine.py
 python play.py
 ```
 
+For a human to play, commands are: arrow keys to move the target and space to fire a missile.
+
 ## Authors
 
 - Elie KADOCHE.
