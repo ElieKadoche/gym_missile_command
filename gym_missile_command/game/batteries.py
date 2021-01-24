@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
-from gym_missile_command.utils import get_render_coordinates
+from gym_missile_command.utils import get_cv2_xy
 
 
 class Batteries():
@@ -75,13 +75,9 @@ class Batteries():
                 representing the pixels. See the object description in the main
                 environment class for information.
         """
-        x_current = 0.0
-        y_current = 0.0
-        get_render_coordinates(x_current, y_current)
-
         cv2.circle(
             img=observation,
-            center=(int(y_current), int(x_current)),
+            center=(get_cv2_xy(0.0, 0.0)),
             radius=int(CONFIG.BATTERY_RADIUS),
             color=CONFIG.COLOR_BATTERY,
             thickness=-1,

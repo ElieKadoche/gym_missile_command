@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
-from gym_missile_command.utils import get_render_coordinates
+from gym_missile_command.utils import get_cv2_xy
 
 
 class Cities():
@@ -128,15 +128,12 @@ class Cities():
                 representing the pixels. See the object description in the main
                 environment class for information.
         """
-        x_centers = self.cities[:, 0]
-        y_centers = self.cities[:, 1]
-        integrities = self.cities[:, 2]
-        get_render_coordinates(x_centers, y_centers)
-
-        for x, y, integrity in zip(x_centers, y_centers, integrities):
+        for x, y, integrity in zip(self.cities[:, 0],
+                                   self.cities[:, 1],
+                                   self.cities[:, 2]):
             cv2.circle(
                 img=observation,
-                center=(int(y), int(x)),
+                center=(get_cv2_xy(x, y)),
                 radius=int(CONFIG.CITY_RADIUS),
                 color=CONFIG.COLOR_CITY,
                 thickness=-1,

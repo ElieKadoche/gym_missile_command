@@ -5,8 +5,8 @@ import numpy as np
 import gym_missile_command.config as CONFIG
 
 
-def get_render_coordinates(x, y):
-    """Transform environment coordinates into render environments.
+def get_cv2_xy(x, y):
+    """Transform x environment position into x opencv position.
 
     The origin of the environment is the anti-missiles battery, placed in the
     bottom center. But in the render method, the origin is in the top left
@@ -14,11 +14,12 @@ def get_render_coordinates(x, y):
     written (y, x) and not (x, y) like for the environment.
 
     Args:
-        x (numpy.array): of size (N) with N being the number of x coordinates
-            to convert.
+        x (float): x environment coordinate.
+        y (float): y environment coordinate.
 
-        y (numpy.array): of size (N) with N being the number of y coordinates
-            to convert.
+    Returns:
+        y (int): x opencv coordinate.
+
+        x (int): x opencv coordinate.
     """
-    x += CONFIG.WIDTH / 2
-    y -= CONFIG.HEIGHT
+    return int(y + CONFIG.HEIGHT), int(x + (CONFIG.WIDTH / 2))

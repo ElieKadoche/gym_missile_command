@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
-from gym_missile_command.utils import get_render_coordinates
+from gym_missile_command.utils import get_cv2_xy
 
 
 class EnemyMissiles():
@@ -169,26 +169,21 @@ class EnemyMissiles():
                 representing the pixels. See the object description in the main
                 environment class for information.
         """
-        x_origin = self.enemy_missiles[:, 0]
-        y_origin = self.enemy_missiles[:, 1]
-        get_render_coordinates(x_origin, y_origin)
-
-        x_current = self.enemy_missiles[:, 2]
-        y_current = self.enemy_missiles[:, 3]
-        get_render_coordinates(x_current, y_current)
-
-        for x0, y0, x, y in zip(x_origin, y_origin, x_current, y_current):
+        for x0, y0, x, y in zip(self.enemy_missiles[:, 0],
+                                self.enemy_missiles[:, 1],
+                                self.enemy_missiles[:, 2],
+                                self.enemy_missiles[:, 3]):
             cv2.line(
                 img=observation,
-                pt1=(int(y0), int(x0)),
-                pt2=(int(y), int(x)),
+                pt1=(get_cv2_xy(x0, y0)),
+                pt2=(get_cv2_xy(x, y)),
                 color=CONFIG.COLOR_ENEMY_MISSILE,
                 thickness=1,
             )
 
             cv2.circle(
                 img=observation,
-                center=(int(y), int(x)),
+                center=(get_cv2_xy(x, y)),
                 radius=int(CONFIG.ENEMY_MISSILE_RADIUS),
                 color=CONFIG.COLOR_ENEMY_MISSILE,
                 thickness=-1,

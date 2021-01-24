@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 import gym_missile_command.config as CONFIG
-from gym_missile_command.utils import get_render_coordinates
+from gym_missile_command.utils import get_cv2_xy
 
 
 class Target():
@@ -71,25 +71,11 @@ class Target():
                 representing the pixels. See the object description in the main
                 environment class for information.
         """
-        current_x = self.x
-        current_y = self.y
-        get_render_coordinates(current_x, current_y)
-
-        # Cross horizontal coordinates
-        h_x0 = self.x - CONFIG.TARGET_SIZE
-        h_x1 = self.x + CONFIG.TARGET_SIZE
-        get_render_coordinates(h_x0, h_x1)
-
-        # Cross vertical coordinates
-        v_y0 = self.y + CONFIG.TARGET_SIZE
-        v_y1 = self.y - CONFIG.TARGET_SIZE
-        get_render_coordinates(v_y0, v_y1)
-
         # Horizontal
         cv2.line(
             img=observation,
-            pt1=(int(current_y), int(h_x0)),
-            pt2=(int(current_y), int(h_x1)),
+            pt1=(get_cv2_xy(self.x - CONFIG.TARGET_SIZE, self.y)),
+            pt2=(get_cv2_xy(self.x + CONFIG.TARGET_SIZE, self.y)),
             color=CONFIG.COLOR_TARGET,
             thickness=1,
         )
@@ -97,8 +83,8 @@ class Target():
         # Vertical
         cv2.line(
             img=observation,
-            pt1=(int(v_y0), int(current_x)),
-            pt2=(int(v_y1), int(current_x)),
+            pt1=(get_cv2_xy(self.x, self.y + CONFIG.TARGET_SIZE)),
+            pt2=(get_cv2_xy(self.x, self.y - CONFIG.TARGET_SIZE)),
             color=CONFIG.COLOR_TARGET,
             thickness=1,
         )
