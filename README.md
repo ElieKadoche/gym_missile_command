@@ -48,6 +48,13 @@ In the [./scripts](./scripts) folder you can find 2 Python scripts explaining ho
 - [./scripts/machine.py](./scripts/machine.py) to let a machine play.
 - [./scripts/play.py](./scripts/play.py) to let a human play.
 
+To use them, simply use the following commands.
+
+```python
+python machine.py
+python play.py
+```
+
 ## Authors
 
 - Elie KADOCHE.
