@@ -43,16 +43,10 @@ A rich configuration of the environment can be edited in [./gym_missile_command/
 
 ## Usage
 
-```python
-import gym
-env = gym.make("gym_missile_command:missile-command-v0")
-observation = env.reset()
-done = False
-while not done:
-    action = env.action_space.sample()  # Random agent
-    observation, reward, done, _ = env.step(action)
-    env.render()
-```
+In the [./scripts](./scripts) folder you can find 2 Python scripts explaining how to use the environment.
+
+- [./scripts/machine.py](./scripts/machine.py) to let a machine play.
+- [./scripts/play.py](./scripts/play.py) to let a human play.
 
 ## Authors
 
