@@ -225,6 +225,7 @@ class MissileCommandEnv(gym.Env):
         # Render every objects
         # ------------------------------------------
 
+        self._reset_observation()
         self.batteries.render(self.observation)
         self.cities.render(self.observation)
         self.enemy_missiles.render(self.observation)

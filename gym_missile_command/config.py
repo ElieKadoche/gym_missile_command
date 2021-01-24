@@ -60,16 +60,16 @@ BATTERY_RADIUS = 35.0
 # ------------------------------------------
 
 # The total number of enemy missiles for 1 episode
-ENEMY_MISSILES_NUMBER = 42
+ENEMY_MISSILES_NUMBER = 142
 
 # The probability for an enemy missile to appear at a time step
-ENEMY_MISSILE_PROBA_IN = 0.05
+ENEMY_MISSILE_PROBA_IN = 0.01
 
 # Radius of an enemy missile object
-ENEMY_MISSILE_RADIUS = 3.0
+ENEMY_MISSILE_RADIUS = 4.0
 
 # Enemy missile speed
-ENEMY_MISSILE_SPEED = 7.0
+ENEMY_MISSILE_SPEED = 2.0
 
 # Battery missiles
 # ------------------------------------------

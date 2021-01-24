@@ -60,8 +60,8 @@ class EnemyMissiles():
         uy = (y1 - y0) / norm
 
         # Compute speed vectors
-        vx = CONFIG.BATTERY_MISSILE_SPEED * ux
-        vy = CONFIG.BATTERY_MISSILE_SPEED * uy
+        vx = CONFIG.ENEMY_MISSILE_SPEED * ux
+        vy = CONFIG.ENEMY_MISSILE_SPEED * uy
 
         # Add the new missile
         # ------------------------------------------
@@ -127,10 +127,12 @@ class EnemyMissiles():
         dy = np.abs(self.enemy_missiles[:, 5] - self.enemy_missiles[:, 3])
 
         # Take the minimum between the actual speed and the distance to target
-        movement_x = np.sign(self.enemy_missiles[:, 6]) \
-            * np.minimum(np.abs(self.enemy_missiles[:, 6]), dx)
-        movement_y = np.sign(self.enemy_missiles[:, 7]) \
-            * np.minimum(np.abs(self.enemy_missiles[:, 7]), dy)
+        movement_x = np.minimum(np.abs(self.enemy_missiles[:, 6]), dx)
+        movement_y = np.minimum(np.abs(self.enemy_missiles[:, 7]), dy)
+
+        # Keep the right sign
+        movement_x *= np.sign(self.enemy_missiles[:, 6])
+        movement_y *= np.sign(self.enemy_missiles[:, 7])
 
         # Step t to step t+1
         self.enemy_missiles[:, 2] += movement_x

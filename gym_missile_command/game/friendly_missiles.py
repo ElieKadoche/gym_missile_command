@@ -130,10 +130,12 @@ class FriendlyMissiles():
             self.missiles_movement[:, 3] - self.missiles_movement[:, 1])
 
         # Take the minimum between the actual speed and the distance to target
-        movement_x = np.sign(self.missiles_movement[:, 4]) \
-            * np.minimum(np.abs(self.missiles_movement[:, 4]), dx)
-        movement_y = np.sign(self.missiles_movement[:, 5]) \
-            * np.minimum(np.abs(self.missiles_movement[:, 5]), dy)
+        movement_x = np.minimum(np.abs(self.missiles_movement[:, 4]), dx)
+        movement_y = np.minimum(np.abs(self.missiles_movement[:, 5]), dy)
+
+        # Keep the good sign
+        movement_x *= np.sign(self.missiles_movement[:, 4])
+        movement_y *= np.sign(self.missiles_movement[:, 5])
 
         # Step t to step t+1
         self.missiles_movement[:, 0] += movement_x

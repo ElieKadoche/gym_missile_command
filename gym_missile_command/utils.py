@@ -22,4 +22,4 @@ def get_cv2_xy(x, y):
 
         x (int): x opencv coordinate.
     """
-    return int(y + CONFIG.HEIGHT), int(x + (CONFIG.WIDTH / 2))
+    return int(CONFIG.HEIGHT - y), int(x + (CONFIG.WIDTH / 2))
