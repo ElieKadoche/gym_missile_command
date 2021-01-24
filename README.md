@@ -26,7 +26,7 @@ The reward depends on several variables, each one contributing to a specific wan
 - Number of cities remaining, to protect the cities.
 - Number of enemy missiles destroyed, to improve accuracy.
 - Number of missiles launched, to minimize the use of missiles.
-- How long before all cities are destroyed, to last as long as possible before all cities are destroyed.
+- How long the episode lasts, to keep cities as safe as long as possible.
 
 ## Installation
 
