@@ -145,7 +145,7 @@ class FriendlyMissiles():
         # ------------------------------------------
 
         # Increase by 1 the explosion
-        self.missiles_explosion[:, 2] += 1.0
+        self.missiles_explosion[:, 2] += CONFIG.BATTERY_MISSILE_EXPLOSION_SPEED
 
         # New exploding missiles
         # ------------------------------------------

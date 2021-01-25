@@ -33,13 +33,13 @@ REWARD_DESTROYED_ENEMEY_MISSILES = 2.0
 # ------------------------------------------
 
 # Horizontal shifting of the target
-TARGET_VX = 3
+TARGET_VX = 6
 
 # Vertical shifting of the target
-TARGET_VY = 3
+TARGET_VY = 6
 
 # Target size (only for render)
-TARGET_SIZE = 6
+TARGET_SIZE = 12
 
 # Cities
 # ------------------------------------------
@@ -60,31 +60,34 @@ BATTERY_RADIUS = 35.0
 # ------------------------------------------
 
 # The total number of enemy missiles for 1 episode
-ENEMY_MISSILES_NUMBER = 142
+ENEMY_MISSILES_NUMBER = 42
 
 # The probability for an enemy missile to appear at a time step
-ENEMY_MISSILE_PROBA_IN = 0.01
+ENEMY_MISSILE_PROBA_IN = 0.005
 
 # Radius of an enemy missile object
 ENEMY_MISSILE_RADIUS = 4.0
 
 # Enemy missile speed
-ENEMY_MISSILE_SPEED = 2.0
+ENEMY_MISSILE_SPEED = 1.0
 
 # Battery missiles
 # ------------------------------------------
 
 # Total number of available battery missiles
-BATTERY_MISSILES_NUMBER = 30
+BATTERY_MISSILES_NUMBER = 142
 
 # Radius of an battery missile object
 BATTERY_MISSILE_RADIUS = 7.0
 
 # Maximum explosion radius
-BATTERY_MISSILE_EXPLOSION_RADIUS = 21.0
+BATTERY_MISSILE_EXPLOSION_RADIUS = 37.0
+
+# Sped of the explosion
+BATTERY_MISSILE_EXPLOSION_SPEED = 0.5
 
 # Battery missile speed
-BATTERY_MISSILE_SPEED = 34.0
+BATTERY_MISSILE_SPEED = 7.0
 
 # Colors
 # ------------------------------------------
