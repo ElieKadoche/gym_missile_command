@@ -43,19 +43,14 @@ A rich configuration of the environment can be edited in [./gym_missile_command/
 
 ## Usage
 
-In the [./scripts](./scripts) folder you can find 2 Python scripts explaining how to use the environment.
-
-- [./scripts/machine.py](./scripts/machine.py) to let a machine play.
-- [./scripts/play.py](./scripts/play.py) to let a human play.
-
+2 examples are given.
 To use them, simply use the following commands.
+For a human to play, commands are: arrow keys to move the target and space to fire a missile.
 
 ```python
-python machine.py
-python play.py
+python -m gym_missile_command.examples.machine.py  # To let a machine play
+python -m gym_missile_command.examples.play.py  # To let a human play
 ```
-
-For a human to play, commands are: arrow keys to move the target and space to fire a missile.
 
 ## Authors
 
