@@ -48,8 +48,8 @@ To use them, simply use the following commands.
 For a human to play, commands are: arrow keys to move the target and space to fire a missile.
 
 ```python
-python -m gym_missile_command.examples.machine.py  # To let a machine play
-python -m gym_missile_command.examples.play.py  # To let a human play
+python -m gym_missile_command.examples.random.py  # For a random agent to play
+python -m gym_missile_command.examples.human.py  # For a human to play
 ```
 
 ## Development
