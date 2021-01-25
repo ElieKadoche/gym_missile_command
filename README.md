@@ -52,6 +52,16 @@ python -m gym_missile_command.examples.machine.py  # To let a machine play
 python -m gym_missile_command.examples.play.py  # To let a human play
 ```
 
+## Development
+
+The entire environment is simulated with Numpy arrays.
+Distances, collisions, movements, etc., of objects are computed without any `for` loops of Python, but with Numpy operations.
+Numpy being well optimized in C++, it (hopefully) makes this environment fast.
+
+The only `for` loops used is the environment are present in the `render` functions.
+The `opencv-python` library is used to generate the pixels of the current image of the environment.
+OpenCV being well optimized in C++, it (hopefully) does not slow too much the computations.
+
 ## Authors
 
 - Elie KADOCHE.
