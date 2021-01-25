@@ -1,11 +1,10 @@
 """Main environment class."""
 
 import gym
+import gym_missile_command.config as CONFIG
 import numpy as np
 import pygame
 from gym import spaces
-
-import gym_missile_command.config as CONFIG
 from gym_missile_command.game.batteries import Batteries
 from gym_missile_command.game.cities import Cities
 from gym_missile_command.game.enemy_missiles import EnemyMissiles
@@ -166,7 +165,7 @@ class MissileCommandEnv(gym.Env):
         self.friendly_missiles.reset()
         self.target.reset()
 
-        return None
+        return self.observation
 
     def step(self, action):
         """Go from current step to next one.
