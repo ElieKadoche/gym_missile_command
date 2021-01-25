@@ -5,32 +5,47 @@ import sys
 import gym
 import pygame
 
-# Create the environment
-env = gym.make("gym_missile_command:missile-command-v0")
+# Number of time step to wait before the user can send a new missile
+STOP_FIRE_WAIT = 10
 
-# Reset it
-observation = env.reset()
 
-# Initialize PyGame
-env.render()
+if __name__ == "__main__":
+    # Create the environment
+    env = gym.make("gym_missile_command:missile-command-v0")
 
-# While the episode is not finished
-done = False
-pause = False
-while not done:
+    # Reset it
+    observation = env.reset()
 
-    for event in pygame.event.get():
-        # Exit the environment
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+    # Initialize PyGame
+    env.render()
 
-        # Pause the environment
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pause = not pause
+    # The user can naturally pause the environment
+    pause = False
 
+    # Prevent multiple fire when the user chooses action 5
+    stop_fire = 0
+
+    # While the episode is not finished
+    done = False
+    while not done:
+
+        # Check if user exits
+        for event in pygame.event.get():
+
+            # Exit the environment
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # Pause the environment
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pause = not pause
+
+        # Get keys pressed by user
         keystate = pygame.key.get_pressed()
+
+        # Default action is 0
         action = 0
 
         # Target up
@@ -51,14 +66,20 @@ while not done:
 
         # Fire missile
         if keystate[pygame.K_SPACE]:
-            action = 5
+            if stop_fire == 0:
+                stop_fire = STOP_FIRE_WAIT
+                action = 5
 
-    if not pause:
-        # One step forward
-        observation, reward, done, _ = env.step(action)
+        # Decrease stop_fire
+        if stop_fire > 0:
+            stop_fire -= 1
 
-        # Render (or not) the environment
-        env.render()
+        if not pause:
+            # One step forward
+            observation, reward, done, _ = env.step(action)
 
-# Close the environment
-env.close()
+            # Render (or not) the environment
+            env.render()
+
+    # Close the environment
+    env.close()
