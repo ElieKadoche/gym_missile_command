@@ -5,7 +5,7 @@ import random
 import cv2
 import numpy as np
 
-import gym_missile_command.config as CONFIG
+from gym_missile_command.config import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -60,8 +60,8 @@ class EnemyMissiles():
         uy = (y1 - y0) / norm
 
         # Compute speed vectors
-        vx = CONFIG.ENEMY_MISSILE_SPEED * ux
-        vy = CONFIG.ENEMY_MISSILE_SPEED * uy
+        vx = CONFIG.ENEMY_MISSILES.SPEED * ux
+        vy = CONFIG.ENEMY_MISSILES.SPEED * uy
 
         # Add the new missile
         # ------------------------------------------
@@ -141,8 +141,8 @@ class EnemyMissiles():
         # Potentially launch a new missile
         # ------------------------------------------
 
-        if self.nb_missiles_launched < CONFIG.ENEMY_MISSILES_NUMBER:
-            if random.random() <= CONFIG.ENEMY_MISSILE_PROBA_IN:
+        if self.nb_missiles_launched < CONFIG.ENEMY_MISSILES.NUMBER:
+            if random.random() <= CONFIG.ENEMY_MISSILES.PROBA_IN:
                 self._launch_missile()
 
         # Remove missiles that hit the ground
@@ -157,7 +157,7 @@ class EnemyMissiles():
             self.enemy_missiles, missiles_out_indices, axis=0)
 
         done = self.enemy_missiles.shape[0] == 0 and \
-            self.nb_missiles_launched == CONFIG.ENEMY_MISSILES_NUMBER
+            self.nb_missiles_launched == CONFIG.ENEMY_MISSILES.NUMBER
         return None, None, done, None
 
     def render(self, observation):
@@ -179,14 +179,14 @@ class EnemyMissiles():
                 img=observation,
                 pt1=(get_cv2_xy(x0, y0)),
                 pt2=(get_cv2_xy(x, y)),
-                color=CONFIG.COLOR_ENEMY_MISSILE,
+                color=CONFIG.COLORS.ENEMY_MISSILE,
                 thickness=1,
             )
 
             cv2.circle(
                 img=observation,
                 center=(get_cv2_xy(x, y)),
-                radius=int(CONFIG.ENEMY_MISSILE_RADIUS),
-                color=CONFIG.COLOR_ENEMY_MISSILE,
+                radius=int(CONFIG.ENEMY_MISSILES.RADIUS),
+                color=CONFIG.COLORS.ENEMY_MISSILE,
                 thickness=-1,
             )

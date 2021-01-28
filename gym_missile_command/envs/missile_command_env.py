@@ -1,10 +1,11 @@
 """Main environment class."""
 
 import gym
-import gym_missile_command.config as CONFIG
 import numpy as np
 import pygame
 from gym import spaces
+
+from gym_missile_command.config import CONFIG
 from gym_missile_command.game.batteries import Batteries
 from gym_missile_command.game.cities import Cities
 from gym_missile_command.game.enemy_missiles import EnemyMissiles
@@ -58,9 +59,9 @@ class MissileCommandEnv(gym.Env):
         """Reset observation."""
         self.observation = np.zeros(
             (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=CONFIG.DTYPE)
-        self.observation[:, :, 0] = CONFIG.COLOR_BACKGROUND[0]
-        self.observation[:, :, 1] = CONFIG.COLOR_BACKGROUND[1]
-        self.observation[:, :, 2] = CONFIG.COLOR_BACKGROUND[2]
+        self.observation[:, :, 0] = CONFIG.COLORS.BACKGROUND[0]
+        self.observation[:, :, 1] = CONFIG.COLORS.BACKGROUND[1]
+        self.observation[:, :, 2] = CONFIG.COLORS.BACKGROUND[2]
 
     def _collisions_missiles(self):
         """Check for missiles collisions.
@@ -87,7 +88,7 @@ class MissileCommandEnv(gym.Env):
 
         # Get enemy missiles inside an explosion radius
         inside_radius = distances <= (
-            friendly_e_dup[:, 2] + CONFIG.ENEMY_MISSILE_RADIUS)
+            friendly_e_dup[:, 2] + CONFIG.ENEMY_MISSILES.RADIUS)
         inside_radius = inside_radius.astype(int)
         inside_radius = np.reshape(
             inside_radius,
@@ -107,7 +108,7 @@ class MissileCommandEnv(gym.Env):
 
         # Compute current reward
         nb_missiles_destroyed = missiles_out.shape[0]
-        self.reward_timestep += CONFIG.REWARD_DESTROYED_ENEMEY_MISSILES * \
+        self.reward_timestep += CONFIG.REWARD.DESTROYED_ENEMEY_MISSILES * \
             nb_missiles_destroyed
 
     def _collisions_cities(self):
@@ -132,7 +133,7 @@ class MissileCommandEnv(gym.Env):
 
         # Get cities destroyed by enemy missiles
         exploded = distances <= (
-            CONFIG.ENEMY_MISSILE_RADIUS + CONFIG.CITY_RADIUS)
+            CONFIG.ENEMY_MISSILES.RADIUS + CONFIG.CITIES.RADIUS)
         exploded = exploded.astype(int)
         exploded = np.reshape(exploded, (cities.shape[0], enemy_m.shape[0]))
 
@@ -218,8 +219,8 @@ class MissileCommandEnv(gym.Env):
             nb_remaining_missiles = self.batteries.batteries[0, 0]
 
             self.reward_timestep += \
-                nb_remaining_city * CONFIG.REWARD_REMAINING_CITY + \
-                nb_remaining_missiles * CONFIG.REWARD_REMAINING_MISSILE
+                nb_remaining_city * CONFIG.REWARD.REMAINING_CITY + \
+                nb_remaining_missiles * CONFIG.REWARD.REMAINING_MISSILE
 
         # Render every objects
         # ------------------------------------------

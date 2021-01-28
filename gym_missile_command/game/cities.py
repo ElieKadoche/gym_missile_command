@@ -5,7 +5,7 @@ import sys
 import cv2
 import numpy as np
 
-import gym_missile_command.config as CONFIG
+from gym_missile_command.config import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -31,21 +31,21 @@ class Cities():
         # ------------------------------------------
 
         # The length of free space for the cities (only for one side)
-        free_space = 0.5 * CONFIG.WIDTH - CONFIG.BATTERY_RADIUS
+        free_space = 0.5 * CONFIG.WIDTH - CONFIG.BATTERY.RADIUS
 
         # Creation of the main numpy array
-        self.cities = np.zeros((CONFIG.CITIES_NUMBER, 3), dtype=CONFIG.DTYPE)
+        self.cities = np.zeros((CONFIG.CITIES.NUMBER, 3), dtype=CONFIG.DTYPE)
 
         # Check for errors
         # ------------------------------------------
 
         # Even number of cities for symmetry, bigger or equal to 2
-        if CONFIG.CITIES_NUMBER % 2 != 0 or CONFIG.CITIES_NUMBER < 2:
+        if CONFIG.CITIES.NUMBER % 2 != 0 or CONFIG.CITIES.NUMBER < 2:
             sys.exit("Please choose an even number of cities, bigger or equal "
                      "to 2.")
 
         # Enough space is needed for objects not to not overlap
-        if free_space < CONFIG.CITIES_NUMBER * CONFIG.CITY_RADIUS:
+        if free_space < CONFIG.CITIES.NUMBER * CONFIG.CITIES.RADIUS:
             sys.exit("Not enough space for the cities. Increase width, "
                      "decrease the number of cities or decrease objects "
                      "radiuses.")
@@ -54,14 +54,14 @@ class Cities():
         # ------------------------------------------
 
         # Gap between cities
-        gap = (free_space - CONFIG.CITIES_NUMBER * CONFIG.CITY_RADIUS) \
-            / (0.5 * CONFIG.CITIES_NUMBER + 1)
+        gap = (free_space - CONFIG.CITIES.NUMBER * CONFIG.CITIES.RADIUS) \
+            / (0.5 * CONFIG.CITIES.NUMBER + 1)
 
         # First position, last position and step between cities centers
-        start = CONFIG.BATTERY_RADIUS + gap + CONFIG.CITY_RADIUS
-        step = gap + 2 * CONFIG.CITY_RADIUS
+        start = CONFIG.BATTERY.RADIUS + gap + CONFIG.CITIES.RADIUS
+        step = gap + 2 * CONFIG.CITIES.RADIUS
         stop = 0.5 * CONFIG.WIDTH - gap
-        half_cities_nb = int(CONFIG.CITIES_NUMBER / 2)
+        half_cities_nb = int(CONFIG.CITIES.NUMBER / 2)
 
         # Cities on the left side
         self.cities[:half_cities_nb, 0] = -np.arange(start=start,
@@ -134,7 +134,7 @@ class Cities():
             cv2.circle(
                 img=observation,
                 center=(get_cv2_xy(x, y)),
-                radius=int(CONFIG.CITY_RADIUS),
-                color=CONFIG.COLOR_CITY,
+                radius=int(CONFIG.CITIES.RADIUS),
+                color=CONFIG.COLORS.CITY,
                 thickness=-1,
             )

@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 
-import gym_missile_command.config as CONFIG
+from gym_missile_command.config import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -47,16 +47,16 @@ class Target():
             info: None.
         """
         if action == 1:
-            self.y = min(CONFIG.HEIGHT, self.y + CONFIG.TARGET_VY)
+            self.y = min(CONFIG.HEIGHT, self.y + CONFIG.TARGET.VY)
 
         elif action == 2:
-            self.y = max(0, self.y - CONFIG.TARGET_VY)
+            self.y = max(0, self.y - CONFIG.TARGET.VY)
 
         elif action == 3:
-            self.x = max(-CONFIG.WIDTH / 2, self.x - CONFIG.TARGET_VX)
+            self.x = max(-CONFIG.WIDTH / 2, self.x - CONFIG.TARGET.VX)
 
         elif action == 4:
-            self.x = min(CONFIG.WIDTH / 2, self.x + CONFIG.TARGET_VX)
+            self.x = min(CONFIG.WIDTH / 2, self.x + CONFIG.TARGET.VX)
 
         return None, None, None, None
 
@@ -74,17 +74,17 @@ class Target():
         # Horizontal
         cv2.line(
             img=observation,
-            pt1=(get_cv2_xy(self.x - CONFIG.TARGET_SIZE, self.y)),
-            pt2=(get_cv2_xy(self.x + CONFIG.TARGET_SIZE, self.y)),
-            color=CONFIG.COLOR_TARGET,
+            pt1=(get_cv2_xy(self.x - CONFIG.TARGET.SIZE, self.y)),
+            pt2=(get_cv2_xy(self.x + CONFIG.TARGET.SIZE, self.y)),
+            color=CONFIG.COLORS.TARGET,
             thickness=1,
         )
 
         # Vertical
         cv2.line(
             img=observation,
-            pt1=(get_cv2_xy(self.x, self.y + CONFIG.TARGET_SIZE)),
-            pt2=(get_cv2_xy(self.x, self.y - CONFIG.TARGET_SIZE)),
-            color=CONFIG.COLOR_TARGET,
+            pt1=(get_cv2_xy(self.x, self.y + CONFIG.TARGET.SIZE)),
+            pt2=(get_cv2_xy(self.x, self.y - CONFIG.TARGET.SIZE)),
+            color=CONFIG.COLORS.TARGET,
             thickness=1,
         )

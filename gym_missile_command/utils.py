@@ -2,7 +2,7 @@
 
 import numpy as np
 
-import gym_missile_command.config as CONFIG
+from gym_missile_command.config import CONFIG
 
 
 def get_cv2_xy(x, y):

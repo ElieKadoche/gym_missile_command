@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 
-import gym_missile_command.config as CONFIG
+from gym_missile_command.config import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -65,8 +65,8 @@ class FriendlyMissiles():
         uy = target.y / norm
 
         # Compute speed vectors
-        vx = CONFIG.BATTERY_MISSILE_SPEED * ux
-        vy = CONFIG.BATTERY_MISSILE_SPEED * uy
+        vx = CONFIG.FRIENDLY_MISSILES.SPEED * ux
+        vy = CONFIG.FRIENDLY_MISSILES.SPEED * uy
 
         # Add the new missile
         # ------------------------------------------
@@ -145,7 +145,8 @@ class FriendlyMissiles():
         # ------------------------------------------
 
         # Increase by 1 the explosion
-        self.missiles_explosion[:, 2] += CONFIG.BATTERY_MISSILE_EXPLOSION_SPEED
+        self.missiles_explosion[:, 2] += \
+            CONFIG.FRIENDLY_MISSILES.EXPLOSION_SPEED
 
         # New exploding missiles
         # ------------------------------------------
@@ -189,7 +190,7 @@ class FriendlyMissiles():
 
         full_explosion_indices = np.squeeze(np.argwhere(
             (self.missiles_explosion[:, 2] >
-             CONFIG.BATTERY_MISSILE_EXPLOSION_RADIUS)
+                CONFIG.FRIENDLY_MISSILES.EXPLOSION_RADIUS)
         ))
 
         self.missiles_explosion = np.delete(
@@ -214,15 +215,15 @@ class FriendlyMissiles():
                 img=observation,
                 pt1=(get_cv2_xy(0.0, 0.0)),
                 pt2=(get_cv2_xy(x, y)),
-                color=CONFIG.COLOR_BATTERY_MISSILE,
+                color=CONFIG.COLORS.FRIENDLY_MISSILE,
                 thickness=1,
             )
 
             cv2.circle(
                 img=observation,
                 center=(get_cv2_xy(x, y)),
-                radius=int(CONFIG.BATTERY_MISSILE_RADIUS),
-                color=CONFIG.COLOR_BATTERY_MISSILE,
+                radius=int(CONFIG.FRIENDLY_MISSILES.RADIUS),
+                color=CONFIG.COLORS.FRIENDLY_MISSILE,
                 thickness=-1,
             )
 
@@ -236,6 +237,6 @@ class FriendlyMissiles():
                 img=observation,
                 center=(get_cv2_xy(x, y)),
                 radius=int(explosion),
-                color=CONFIG.COLOR_EXPLOSION,
+                color=CONFIG.COLORS.EXPLOSION,
                 thickness=-1,
             )

@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 
-import gym_missile_command.config as CONFIG
+from gym_missile_command.config import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -13,7 +13,7 @@ class Batteries():
     Attributes:
         NB_BATTERY (int): the number of batteries. It only supports 1 battery.
     """
-    NB_BATTERY = 1
+    NB_BATTERIES = 1
 
     def __init__(self):
         """Initialize 1 battery.
@@ -23,7 +23,7 @@ class Batteries():
                 batteries, i.d. 1. The feature is: (0) number of available
                 missiles.
         """
-        self.batteries = np.zeros((self.NB_BATTERY, 1), dtype=CONFIG.DTYPE)
+        self.batteries = np.zeros((self.NB_BATTERIES, 1), dtype=CONFIG.DTYPE)
 
     def reset(self):
         """Reset batteries.
@@ -34,7 +34,7 @@ class Batteries():
             To fully initialize a Batteries object, init function and reset
             function musts be called.
         """
-        self.batteries[:, 0] = CONFIG.BATTERY_MISSILES_NUMBER
+        self.batteries[:, 0] = CONFIG.FRIENDLY_MISSILES.NUMBER
         self.nb_missiles_launched = 0
 
     def step(self, action):
@@ -78,7 +78,7 @@ class Batteries():
         cv2.circle(
             img=observation,
             center=(get_cv2_xy(0.0, 0.0)),
-            radius=int(CONFIG.BATTERY_RADIUS),
-            color=CONFIG.COLOR_BATTERY,
+            radius=int(CONFIG.BATTERY.RADIUS),
+            color=CONFIG.COLORS.BATTERY,
             thickness=-1,
         )
