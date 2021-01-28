@@ -37,19 +37,35 @@ The installation is done with the following commands.
 git clone https://github.com/ElieKadoche/gym_missile_command.git
 pip install -e ./gym_missile_command
 ```
-## Configuration
-
-A rich configuration of the environment can be edited in [./gym_missile_command/config.py](./gym_missile_command/config.py).
-
 ## Usage
 
 2 examples are given.
 To use them, simply use the following commands.
 For a human to play, commands are: arrow keys to move the target and space to fire a missile.
 
-```python
+```shell
 python -m gym_missile_command.examples.random_agent  # For a random agent to play
 python -m gym_missile_command.examples.human_agent  # For a human to play
+```
+
+## Configuration
+
+When creating a Missile Command environment, one can create a custom configuration.
+The object `custom_config` is a dictionary containing a custom configuration.
+Keys are the attributes and values are... Well, the custom values.
+To see the whole customizable configuration, see [./gym_missile_command/config.py](./gym_missile_command/config.py).
+Below is an example.
+
+```python
+import gym
+
+# Custom configuration, empty for no changes
+custom_config = {"ENEMY_MISSILES.NUMBER": 42,
+                 "FRIENDLY_MISSILES.EXPLOSION_RADIUS": 17}
+
+# Create the environment
+env = gym.make("gym_missile_command:missile-command-v0",
+               custom_config=custom_config)
 ```
 
 ## Development
