@@ -1,4 +1,5 @@
 """Main environment class."""
+import sys
 
 import gym
 import numpy as np
@@ -11,6 +12,7 @@ from gym_missile_command.game.cities import Cities
 from gym_missile_command.game.enemy_missiles import EnemyMissiles
 from gym_missile_command.game.friendly_missiles import FriendlyMissiles
 from gym_missile_command.game.target import Target
+from gym_missile_command.utils import rgetattr, rsetattr
 
 
 class MissileCommandEnv(gym.Env):
@@ -24,8 +26,14 @@ class MissileCommandEnv(gym.Env):
     NB_ACTIONS = 6
     metadata = {"render.modes": ["human"]}
 
-    def __init__(self):
+    def __init__(self, custom_config):
         """Initialize MissileCommand environment.
+
+        Args:
+            custom_config (dict): optional, custom configuration dictionary
+                with configuration attributes (strings) as keys (for example
+                "FRIENDLY_MISSILES.NUMBER") and values as... Well, values (for
+                example 42).
 
         Attributes:
             timestep (int): current timestep, starts from 0.
@@ -45,6 +53,25 @@ class MissileCommandEnv(gym.Env):
         super(MissileCommandEnv, self).__init__()
         self.action_space = spaces.Discrete(self.NB_ACTIONS)
 
+        # Custom configuration
+        # ------------------------------------------
+
+        # For each custom attributes
+        for key, value in custom_config.items():
+
+            # Check if attributes is valid
+            try:
+                _ = rgetattr(CONFIG, key)
+            except AttributeError as e:
+                print("Invalid custom configuration: {}".format(e))
+                sys.exit(1)
+
+            # Modify it
+            rsetattr(CONFIG, key, value)
+
+        # Initializing objects
+        # ------------------------------------------
+
         # No display while no render
         self.display = None
 
@@ -55,13 +82,42 @@ class MissileCommandEnv(gym.Env):
         self.friendly_missiles = FriendlyMissiles()
         self.target = Target()
 
-    def _reset_observation(self):
-        """Reset observation."""
-        self.observation = np.zeros(
-            (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=CONFIG.DTYPE)
-        self.observation[:, :, 0] = CONFIG.COLORS.BACKGROUND[0]
-        self.observation[:, :, 1] = CONFIG.COLORS.BACKGROUND[1]
-        self.observation[:, :, 2] = CONFIG.COLORS.BACKGROUND[2]
+    def _collisions_cities(self):
+        """Check for cities collisions.
+
+        Check cities destroyed by enemy missiles.
+        """
+        # Cities
+        cities = self.cities.cities
+
+        # Enemy missiles current positions
+        enemy_m = self.enemy_missiles.enemy_missiles[:, [2, 3]]
+
+        # Align cities and enemy missiles
+        cities_dup = np.repeat(cities, enemy_m.shape[0], axis=0)
+        enemy_m_dup = np.tile(enemy_m, reps=[cities.shape[0], 1])
+
+        # Compute distances
+        dx = enemy_m_dup[:, 0] - cities_dup[:, 0]
+        dy = enemy_m_dup[:, 1] - cities_dup[:, 1]
+        distances = np.sqrt(np.square(dx) + np.square(dy))
+
+        # Get cities destroyed by enemy missiles
+        exploded = distances <= (
+            CONFIG.ENEMY_MISSILES.RADIUS + CONFIG.CITIES.RADIUS)
+        exploded = exploded.astype(int)
+        exploded = np.reshape(exploded, (cities.shape[0], enemy_m.shape[0]))
+
+        # Destroy even more these cities
+        cities_out = np.argwhere(
+            (np.sum(exploded, axis=1) >= 1) &
+            (cities[:, 2] > 0.0)
+        )
+        self.cities.cities = np.delete(
+            self.cities.cities,
+            np.squeeze(cities_out),
+            axis=0,
+        )
 
     def _collisions_missiles(self):
         """Check for missiles collisions.
@@ -111,42 +167,13 @@ class MissileCommandEnv(gym.Env):
         self.reward_timestep += CONFIG.REWARD.DESTROYED_ENEMEY_MISSILES * \
             nb_missiles_destroyed
 
-    def _collisions_cities(self):
-        """Check for cities collisions.
-
-        Check cities destroyed by enemy missiles.
-        """
-        # Cities
-        cities = self.cities.cities
-
-        # Enemy missiles current positions
-        enemy_m = self.enemy_missiles.enemy_missiles[:, [2, 3]]
-
-        # Align cities and enemy missiles
-        cities_dup = np.repeat(cities, enemy_m.shape[0], axis=0)
-        enemy_m_dup = np.tile(enemy_m, reps=[cities.shape[0], 1])
-
-        # Compute distances
-        dx = enemy_m_dup[:, 0] - cities_dup[:, 0]
-        dy = enemy_m_dup[:, 1] - cities_dup[:, 1]
-        distances = np.sqrt(np.square(dx) + np.square(dy))
-
-        # Get cities destroyed by enemy missiles
-        exploded = distances <= (
-            CONFIG.ENEMY_MISSILES.RADIUS + CONFIG.CITIES.RADIUS)
-        exploded = exploded.astype(int)
-        exploded = np.reshape(exploded, (cities.shape[0], enemy_m.shape[0]))
-
-        # Destroy even more these cities
-        cities_out = np.argwhere(
-            (np.sum(exploded, axis=1) >= 1) &
-            (cities[:, 2] > 0.0)
-        )
-        self.cities.cities = np.delete(
-            self.cities.cities,
-            np.squeeze(cities_out),
-            axis=0,
-        )
+    def _reset_observation(self):
+        """Reset observation."""
+        self.observation = np.zeros(
+            (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=CONFIG.DTYPE)
+        self.observation[:, :, 0] = CONFIG.COLORS.BACKGROUND[0]
+        self.observation[:, :, 1] = CONFIG.COLORS.BACKGROUND[1]
+        self.observation[:, :, 2] = CONFIG.COLORS.BACKGROUND[2]
 
     def reset(self):
         """Reset the environment.
