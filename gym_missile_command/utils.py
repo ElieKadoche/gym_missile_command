@@ -1,6 +1,6 @@
 """Useful functions."""
 
-import numpy as np
+import functools
 
 from gym_missile_command.config import CONFIG
 
@@ -23,3 +23,16 @@ def get_cv2_xy(x, y):
         x (int): x opencv coordinate.
     """
     return int(CONFIG.HEIGHT - y), int(x + (CONFIG.WIDTH / 2))
+
+
+def rgetattr(obj, attr, *args):
+    """Recursive getattr function."""
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+    return functools.reduce(_getattr, [obj] + attr.split('.'))
+
+
+def rsetattr(obj, attr, val):
+    """Recursive setattr function."""
+    pre, _, post = attr.rpartition('.')
+    return setattr(rgetattr(obj, pre) if pre else obj, post, val)
