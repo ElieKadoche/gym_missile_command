@@ -1,9 +1,13 @@
 """Environment usage for a human."""
 
+import contextlib
 import sys
 
 import gym
-import pygame
+
+# Import Pygame and remove welcome message
+with contextlib.redirect_stdout(None):
+    import pygame
 
 # Number of time step to wait before the user can send a new missile
 STOP_FIRE_WAIT = 10

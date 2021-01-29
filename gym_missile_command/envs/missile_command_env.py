@@ -1,9 +1,9 @@
 """Main environment class."""
+import contextlib
 import sys
 
 import gym
 import numpy as np
-import pygame
 from gym import spaces
 
 from gym_missile_command.config import CONFIG
@@ -13,6 +13,10 @@ from gym_missile_command.game.enemy_missiles import EnemyMissiles
 from gym_missile_command.game.friendly_missiles import FriendlyMissiles
 from gym_missile_command.game.target import Target
 from gym_missile_command.utils import rgetattr, rsetattr
+
+# Import Pygame and remove welcome message
+with contextlib.redirect_stdout(None):
+    import pygame
 
 
 class MissileCommandEnv(gym.Env):
@@ -264,6 +268,8 @@ class MissileCommandEnv(gym.Env):
     def render(self, mode="human"):
         """Render the environment."""
         if not self.display:
+            pygame.init()
+            pygame.display.set_caption("MissileCommand")
             self.display = pygame.display.set_mode(
                 (CONFIG.WIDTH, CONFIG.HEIGHT))
 
