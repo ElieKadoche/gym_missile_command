@@ -2,6 +2,8 @@
 
 Open AI Gym environment of the [Missile Command Atari game](https://en.wikipedia.org/wiki/Missile_Command).
 
+![Demonstration (gif)](./materials/human_demo.gif)
+
 ## What for?
 
 To easily train and test different bots on the Missile Command Atari game.
