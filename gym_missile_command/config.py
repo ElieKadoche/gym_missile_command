@@ -14,8 +14,8 @@ class CONFIG():
         WIDTH (int): environment width.
         DTYPE (numpy.dtype): numpy arrays type.
     """
-    HEIGHT: int = 600
-    WIDTH: int = 1100
+    HEIGHT: int = 466
+    WIDTH: int = 966
     DTYPE: np.dtype = np.float32
 
     @dataclass
@@ -25,7 +25,7 @@ class CONFIG():
         Attributes:
             RADIUS (float): radius of the anti-missile battery object.
         """
-        RADIUS: float = 35.0
+        RADIUS: float = 37.0
 
     @dataclass
     class CITIES():
@@ -36,7 +36,7 @@ class CONFIG():
             RADIUS (float): radius of a city object.
         """
         NUMBER: int = 6
-        RADIUS: float = 27.0
+        RADIUS: float = 24.0
 
     @dataclass
     class COLORS():
@@ -44,7 +44,7 @@ class CONFIG():
 
         Attributes:
             BACKGROUND (tuple): #000000.
-            BATTERY (tuple): #ff0ff0.
+            BATTERY (tuple): #ffffff.
             CITY (tuple): #0000ff.
             ENEMY_MISSILE (tuple): #ff0000.
             EXPLOSION (tuple): #ffff00.
@@ -52,7 +52,7 @@ class CONFIG():
             TARGET (tuple): #ffffff.
         """
         BACKGROUND: tuple = (0, 0, 0)
-        BATTERY: tuple = (255, 15, 240)
+        BATTERY: tuple = (255, 255, 255)
         CITY: tuple = (0, 0, 255)
         ENEMY_MISSILE: tuple = (255, 0, 0)
         EXPLOSION: tuple = (255, 255, 0)
@@ -70,7 +70,7 @@ class CONFIG():
             RADIUS (float): radius of an enemy missile object.
             SPEED (float): enemy missile speed.
         """
-        NUMBER: int = 42
+        NUMBER: int = 19
         PROBA_IN: float = 0.005
         RADIUS: float = 4.0
         SPEED: float = 1.0
@@ -117,5 +117,5 @@ class CONFIG():
             VY (int): vertical shifting of the target.
         """
         SIZE: int = 12
-        VX: int = 6
-        VY: int = 6
+        VX: int = 4
+        VY: int = 4
