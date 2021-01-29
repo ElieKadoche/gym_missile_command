@@ -30,7 +30,7 @@ class MissileCommandEnv(gym.Env):
     NB_ACTIONS = 6
     metadata = {"render.modes": ["human"]}
 
-    def __init__(self, custom_config):
+    def __init__(self, custom_config={}):
         """Initialize MissileCommand environment.
 
         Args:

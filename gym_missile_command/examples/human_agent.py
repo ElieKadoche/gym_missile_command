@@ -14,12 +14,8 @@ STOP_FIRE_WAIT = 10
 
 
 if __name__ == "__main__":
-    # Custom configuration, empty for no changes
-    custom_config = {}
-
     # Create the environment
-    env = gym.make("gym_missile_command:missile-command-v0",
-                   custom_config=custom_config)
+    env = gym.make("gym_missile_command:missile-command-v0")
 
     # Reset it
     observation = env.reset()
