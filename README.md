@@ -23,10 +23,9 @@ An episode ends when all enemy missiles or cities are destroyed.
 The reward is one of the most decisive value for the success of a Reinforcement Learning algorithm.
 The reward depends on several variables, each one contributing to a specific wanted skill of the engine.
 
-- Number of cities remaining, to protect the cities.
+- Number of cities destroyed, to protect the cities.
 - Number of enemy missiles destroyed, to improve accuracy.
 - Number of missiles launched, to minimize the use of missiles.
-- How long the episode lasts, to keep cities as safe as long as possible.
 
 ## Installation
 

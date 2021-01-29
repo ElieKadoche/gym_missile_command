@@ -98,16 +98,14 @@ class CONFIG():
 
         Attributes:
             DESTROYED_CITY (float): reward for each destroyed city.
-            DESTROYED_ENEMEY_MISSILES (float): reward for each
-                destroyed missile.
-            REMAINING_CITY (float): reward for each remaining city.
-            REMAINING_MISSILE (float): reward for each remaining
+            DESTROYED_ENEMEY_MISSILES (float): reward for each destroyed
                 missile.
+            FRIENDLY_MISSILE_LAUNCHED (float); reward for each friendly
+                missile launched.
         """
         DESTROYED_CITY: float = -10.0
-        DESTROYED_ENEMEY_MISSILES: float = 2.0
-        REMAINING_CITY: float = 10.0
-        REMAINING_MISSILE: float = 5.0
+        DESTROYED_ENEMEY_MISSILES: float = 15.0
+        FRIENDLY_MISSILE_LAUNCHED: float = -4.0
 
     @dataclass
     class TARGET():

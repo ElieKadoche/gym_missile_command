@@ -108,11 +108,17 @@ class MissileCommandEnv(gym.Env):
         exploded = exploded.astype(int)
         exploded = np.reshape(exploded, (cities.shape[0], enemy_m.shape[0]))
 
-        # Destroy even more these cities
+        # Get destroyed cities
         cities_out = np.argwhere(
             (np.sum(exploded, axis=1) >= 1) &
             (cities[:, 2] > 0.0)
         )
+
+        # Update timestep reward
+        self.reward_timestep += CONFIG.REWARD.DESTROYED_CITY * \
+            cities_out.shape[0]
+
+        # Remove these cities
         self.cities.cities = np.delete(
             self.cities.cities,
             np.squeeze(cities_out),
@@ -158,9 +164,6 @@ class MissileCommandEnv(gym.Env):
             np.squeeze(missiles_out),
             axis=0,
         )
-
-        # Compute current reward
-        nb_missiles_destroyed = missiles_out.shape[0]
 
         # Compute current reward
         nb_missiles_destroyed = missiles_out.shape[0]
@@ -210,16 +213,15 @@ class MissileCommandEnv(gym.Env):
 
             info (dict): additional information on the current time step.
         """
-        # Reset current reward and observation
+        # Reset current reward
         # ------------------------------------------
 
-        self._reset_observation()
         self.reward_timestep = 0.0
 
         # Step functions
         # ------------------------------------------
 
-        _, _, _, can_fire_dict = self.batteries.step(action)
+        _, battery_reward, _, can_fire_dict = self.batteries.step(action)
         _, _, done_cities, _ = self.cities.step(action)
         _, _, done_enemy_missiles, _ = self.enemy_missiles.step(action)
         _, _, _, _ = self.friendly_missiles.step(action)
@@ -230,6 +232,7 @@ class MissileCommandEnv(gym.Env):
 
         if action == 5 and can_fire_dict["can_fire"]:
             self.friendly_missiles.launch_missile(self.target)
+            self.reward_timestep += CONFIG.REWARD.FRIENDLY_MISSILE_LAUNCHED
 
         # Check for collisions
         # ------------------------------------------
@@ -241,13 +244,6 @@ class MissileCommandEnv(gym.Env):
         # ------------------------------------------
 
         done = done_cities or done_enemy_missiles
-        if done:
-            nb_remaining_city = self.cities.get_remaining_cities()
-            nb_remaining_missiles = self.batteries.batteries[0, 0]
-
-            self.reward_timestep += \
-                nb_remaining_city * CONFIG.REWARD.REMAINING_CITY + \
-                nb_remaining_missiles * CONFIG.REWARD.REMAINING_MISSILE
 
         # Render every objects
         # ------------------------------------------
