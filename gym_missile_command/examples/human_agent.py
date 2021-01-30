@@ -10,8 +10,7 @@ with contextlib.redirect_stdout(None):
     import pygame
 
 # Number of time step to wait before the user can send a new missile
-STOP_FIRE_WAIT = 10
-
+STOP_FIRE_WAIT = 57
 
 if __name__ == "__main__":
     # Create the environment
