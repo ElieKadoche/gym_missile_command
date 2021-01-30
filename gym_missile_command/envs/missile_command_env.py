@@ -56,6 +56,12 @@ class MissileCommandEnv(gym.Env):
         """
         super(MissileCommandEnv, self).__init__()
         self.action_space = spaces.Discrete(self.NB_ACTIONS)
+        self.observation_space = spaces.Box(
+            low=0,
+            high=255,
+            shape=(CONFIG.HEIGHT, CONFIG.WIDTH, 3),
+            dtype=np.uint8,
+        )
 
         # Custom configuration
         # ------------------------------------------
@@ -177,7 +183,7 @@ class MissileCommandEnv(gym.Env):
     def _reset_observation(self):
         """Reset observation."""
         self.observation = np.zeros(
-            (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=CONFIG.DTYPE)
+            (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=np.uint8)
         self.observation[:, :, 0] = CONFIG.COLORS.BACKGROUND[0]
         self.observation[:, :, 1] = CONFIG.COLORS.BACKGROUND[1]
         self.observation[:, :, 2] = CONFIG.COLORS.BACKGROUND[2]
