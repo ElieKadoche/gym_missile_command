@@ -272,6 +272,7 @@ class MissileCommandEnv(gym.Env):
             pygame.display.set_caption("MissileCommand")
             self.display = pygame.display.set_mode(
                 (CONFIG.WIDTH, CONFIG.HEIGHT))
+            pygame.mouse.set_visible(False)
 
         surface = pygame.surfarray.make_surface(self.observation)
         self.display.blit(surface, (0, 0))
