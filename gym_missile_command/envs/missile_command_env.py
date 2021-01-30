@@ -83,6 +83,7 @@ class MissileCommandEnv(gym.Env):
         # ------------------------------------------
 
         # No display while no render
+        self.clock = None
         self.display = None
 
         # Objects
@@ -275,6 +276,7 @@ class MissileCommandEnv(gym.Env):
         """Render the environment."""
         if not self.display:
             pygame.init()
+            self.clock = pygame.time.Clock()
             pygame.display.set_caption("MissileCommand")
             self.display = pygame.display.set_mode(
                 (CONFIG.WIDTH, CONFIG.HEIGHT))
@@ -283,6 +285,9 @@ class MissileCommandEnv(gym.Env):
         surface = pygame.surfarray.make_surface(self.observation)
         self.display.blit(surface, (0, 0))
         pygame.display.update()
+
+        # Limix max FPS
+        self.clock.tick(CONFIG.FPS)
 
     def close(self):
         """Close the environment."""

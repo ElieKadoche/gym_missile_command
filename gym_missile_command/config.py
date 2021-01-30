@@ -10,13 +10,15 @@ class CONFIG():
     """Configuration class.
 
     Attributes:
+        DTYPE (numpy.dtype): numpy arrays type.
+        FPS (int): limit FPS for rendering only.
         HEIGHT (int): environment height.
         WIDTH (int): environment width.
-        DTYPE (numpy.dtype): numpy arrays type.
     """
+    DTYPE: np.dtype = np.float32
+    FPS: int = 144
     HEIGHT: int = 466
     WIDTH: int = 966
-    DTYPE: np.dtype = np.float32
 
     @dataclass
     class BATTERY():
