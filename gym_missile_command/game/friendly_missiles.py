@@ -14,7 +14,6 @@ class FriendlyMissiles():
 
     Attributes:
         ORIGIN_X (float): x origin position of the anti-missiles battery.
-
         ORIGIN_Y (float): y origin position of the anti-missiles battery.
     """
 
@@ -34,7 +33,6 @@ class FriendlyMissiles():
                 (0) current x position, (1) current y position, (2) final x
                 position, (3) final y position, (4) horizontal speed vx and (5)
                 vertical speed (vy).
-
             missiles_explosion (numpy array): of size (M, 3) with M the number
                 of missiles in explosion. The features are: (0) x position, (1)
                 y position and (2) explosion level.
@@ -203,7 +201,7 @@ class FriendlyMissiles():
 
         Args:
             observation (numpy.array): the current environment observation
-                representing the pixe1ls. See the object description in the
+                representing the pixels. See the object description in the
                 main environment class for information.
         """
         # Moving missiles

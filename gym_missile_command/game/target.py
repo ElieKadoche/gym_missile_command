@@ -15,7 +15,6 @@ class Target():
 
         Attributes:
             x (float): x position.
-
             y (float): y position.
         """
         pass

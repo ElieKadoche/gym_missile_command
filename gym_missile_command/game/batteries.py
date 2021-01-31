@@ -22,6 +22,7 @@ class Batteries():
             batteries (numpy array): of size (N, 1) with N the number of
                 batteries, i.d. 1. The feature is: (0) number of available
                 missiles.
+            nb_missiles_launched (int): the number of missiles launched.
         """
         self.batteries = np.zeros((self.NB_BATTERIES, 1), dtype=CONFIG.DTYPE)
 

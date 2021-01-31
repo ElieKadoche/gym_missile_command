@@ -25,7 +25,6 @@ class EnemyMissiles():
                 position, (3) current y position, (4) final x position, (5)
                 final y position, (6) horizontal speed vx and (7) vertical
                 speed vy.
-
             nb_missiles_launched (int): the number of enemy missiles launched
                 in the environment.
         """
