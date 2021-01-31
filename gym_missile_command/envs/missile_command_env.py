@@ -2,6 +2,7 @@
 import contextlib
 import sys
 
+import cv2
 import gym
 import numpy as np
 from gym import spaces
@@ -26,9 +27,10 @@ class MissileCommandEnv(gym.Env):
         NB_ACTIONS (int): the 6 possible actions. (0) do nothing, (1) target
             up, (2) target down, (3) target left, (4) target right, (5) fire
             missile.
+        metadata (dict): OpenAI Gym dictionary with the "render.modes" key.
     """
     NB_ACTIONS = 6
-    metadata = {"render.modes": ["human"]}
+    metadata = {"render.modes": ["human", "rgb_array"]}
 
     def __init__(self, custom_config={}):
         """Initialize MissileCommand environment.
@@ -40,26 +42,30 @@ class MissileCommandEnv(gym.Env):
                 example 42).
 
         Attributes:
-            timestep (int): current timestep, starts from 0.
-
-            observation (numpy.array): of size (WIDTH, HEIGHT, 3). The
-                observation of the current timestep, representing the RGB
-                values of each pixel.
-
-            reward_timestep (float): reward of the current timestep.
-
-            reward_total (float): reward sum from first timestep to current
-                one.
-
+            action_space (gym.spaces.discrete.Discrete): OpenAI Gym action
+                space.
+            batteries (Batteries): Batteries game object.
+            cities (Cities): Cities game object.
+            clock (pygame.time.Clock): Pygame clock.
             display (pygame.Surface): pygame surface, only for the render
                 method.
+            enemy_missiles (EnemyMissiles): EnemyMissiles game object.
+            friendly_missiles (FriendlyMissiles): FriendlyMissiles game object.
+            observation (numpy.array): of size (CONFIG.WIDTH, CONFIG.HEIGHT,
+                3). The observation of the current timestep, representing the
+                RGB values of each pixel.
+            observation_space (gym.spaces.Box): OpenAI Gym observation space.
+            reward_timestep (float): reward of the current timestep.
+            reward_total (float): reward sum from first timestep to current
+                one.
+            timestep (int): current timestep, starts from 0.
         """
         super(MissileCommandEnv, self).__init__()
         self.action_space = spaces.Discrete(self.NB_ACTIONS)
         self.observation_space = spaces.Box(
             low=0,
             high=255,
-            shape=(CONFIG.HEIGHT, CONFIG.WIDTH, 3),
+            shape=(CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH, 3),
             dtype=np.uint8,
         )
 
@@ -181,33 +187,65 @@ class MissileCommandEnv(gym.Env):
         self.reward_timestep += CONFIG.REWARD.DESTROYED_ENEMEY_MISSILES * \
             nb_missiles_destroyed
 
-    def _reset_observation(self):
-        """Reset observation."""
+    def _compute_observation(self):
+        """Compute observation."""
+        # Reset observation
         self.observation = np.zeros(
             (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=np.uint8)
         self.observation[:, :, 0] = CONFIG.COLORS.BACKGROUND[0]
         self.observation[:, :, 1] = CONFIG.COLORS.BACKGROUND[1]
         self.observation[:, :, 2] = CONFIG.COLORS.BACKGROUND[2]
 
+        # Draw objects
+        self.batteries.render(self.observation)
+        self.cities.render(self.observation)
+        self.enemy_missiles.render(self.observation)
+        self.friendly_missiles.render(self.observation)
+        self.target.render(self.observation)
+
+    def _process_observation(self):
+        """Process observation.
+
+        This function could be implemented into the agent model, but for
+        commodity this environment can do it directly.
+
+        The interpolation mode INTER_AREA seems to give the best results. With
+        other methods, every objects could not be seen at all timesteps.
+
+        Returns:
+            processed_observation (numpy.array): of size
+                (CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH, 3), the
+                resized (or not) observation.
+        """
+        processed_observation = cv2.resize(
+            self.observation,
+            (CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH),
+            interpolation=cv2.INTER_AREA,
+        )
+        return processed_observation
+
     def reset(self):
         """Reset the environment.
 
         Returns:
-            observation (numpy.array): the representation of the environment.
+            observation (numpy.array): the processed observation.
         """
+        # Reset timestep and rewards
         self.timestep = 0
         self.reward_total = 0.0
         self.reward_timestep = 0.0
 
-        self._reset_observation()
-
+        # Reset objects
         self.batteries.reset()
         self.cities.reset()
         self.enemy_missiles.reset()
         self.friendly_missiles.reset()
         self.target.reset()
 
-        return self.observation
+        # Compute observation
+        self._compute_observation()
+
+        return self._process_observation()
 
     def step(self, action):
         """Go from current step to next one.
@@ -216,7 +254,7 @@ class MissileCommandEnv(gym.Env):
             action (int): 0, 1, 2, 3, 4 or 5, the different actions.
 
         Returns:
-            observation (numpy.array): the representation of the environment.
+            observation (numpy.array): the processed observation.
 
             reward (float): reward of the current time step.
 
@@ -259,30 +297,50 @@ class MissileCommandEnv(gym.Env):
         # Render every objects
         # ------------------------------------------
 
-        self._reset_observation()
-        self.batteries.render(self.observation)
-        self.cities.render(self.observation)
-        self.enemy_missiles.render(self.observation)
-        self.friendly_missiles.render(self.observation)
-        self.target.render(self.observation)
+        self._compute_observation()
 
         # Return everything
         # ------------------------------------------
 
         self.reward_total += self.reward_timestep
-        return self.observation, self.reward_timestep, done, None
+        return self._process_observation(), self.reward_timestep, done, {}
 
-    def render(self, mode="human"):
-        """Render the environment."""
+    def render(self, mode="rgb_array"):
+        """Render the environment.
+
+        This function renders the environment observation. To check what the
+        processed observation looks like, it can also renders it.
+
+        Args:
+            mode (str): the render mode. Possible values are "rgb_array" and
+                "processed_observation".
+        """
         if not self.display:
             pygame.init()
+            pygame.mouse.set_visible(False)
             self.clock = pygame.time.Clock()
             pygame.display.set_caption("MissileCommand")
+
+        # Display the normal observation
+        if mode == "rgb_array":
             self.display = pygame.display.set_mode(
                 (CONFIG.WIDTH, CONFIG.HEIGHT))
-            pygame.mouse.set_visible(False)
+            surface = pygame.surfarray.make_surface(self.observation)
 
-        surface = pygame.surfarray.make_surface(self.observation)
+        # Display the processed observation
+        elif mode == "processed_observation":
+            self.display = pygame.display.set_mode((
+                CONFIG.OBSERVATION.RENDER_PROCESSED_HEIGHT,
+                CONFIG.OBSERVATION.RENDER_PROCESSED_WIDTH,
+            ))
+            surface = pygame.surfarray.make_surface(
+                self._process_observation())
+            surface = pygame.transform.scale(
+                surface,
+                (CONFIG.OBSERVATION.RENDER_PROCESSED_HEIGHT,
+                 CONFIG.OBSERVATION.RENDER_PROCESSED_WIDTH),
+            )
+
         self.display.blit(surface, (0, 0))
         pygame.display.update()
 
