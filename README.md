@@ -55,6 +55,7 @@ When creating a Missile Command environment, one can create a custom configurati
 The object `custom_config` is a dictionary containing a custom configuration.
 Keys are the attributes and values are... Well, the custom values.
 To see the whole customizable configuration, see [./gym_missile_command/config.py](./gym_missile_command/config.py).
+To use the default configuration, you can just omit the `custom_config` argument.
 Below is an example.
 
 ```python
