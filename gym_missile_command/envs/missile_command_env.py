@@ -30,7 +30,8 @@ class MissileCommandEnv(gym.Env):
         metadata (dict): OpenAI Gym dictionary with the "render.modes" key.
     """
     NB_ACTIONS = 6
-    metadata = {"render.modes": ["human", "rgb_array"]}
+    metadata = {"render.modes": ["human", "rgb_array"],
+                'video.frames_per_second': CONFIG.FPS}
 
     def __init__(self, custom_config={}):
         """Initialize MissileCommand environment.
