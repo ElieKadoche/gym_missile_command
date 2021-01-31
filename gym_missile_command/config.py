@@ -95,6 +95,36 @@ class CONFIG():
         SPEED: float = 7.0
 
     @dataclass
+    class OBSERVATION():
+        """Observation configuration.
+
+        An agent takes as input the screen pixels. The resolution of the
+        environment can be quite big: the computational cost to train an agent
+        can then be high.
+
+        For an agent to well perform on the Missile Command Atari game, a
+        smaller resized version of the observation can be enough.
+
+        So the environment returns a resized version of the environment
+        observation.
+
+        If you wish to not resize the observation, fix these variables to the
+        same values as CONFIG.HEIGHT and CONFIG.WIDTH.
+
+        Attributes:
+            HEIGHT (float): observation height.
+            RENDER_PROCESSED_HEIGHT (float): render window height of the
+                processed observation.
+            RENDER_PROCESSED_WIDTH (float): render window width of the
+                processed observation.
+            WIDTH (float): observation width.
+        """
+        HEIGHT: float = 84
+        RENDER_PROCESSED_HEIGHT = 250
+        RENDER_PROCESSED_WIDTH = 250
+        WIDTH: float = 84
+
+    @dataclass
     class REWARD():
         """Reward configuration.
 
