@@ -1,4 +1,8 @@
-"""DQN with RLlib."""
+"""DQN with RLlib.
+
+Checkpoints and results are saved in ~/ray_results. Inside the folder of your
+choice, you can execute "tensorboard --logdir ." to monitor results.
+"""
 
 import argparse
 
@@ -127,6 +131,10 @@ if __name__ == "__main__":
     # Initialize parser
     parser = argparse.ArgumentParser(
         description="DQN agent training and testing with RLlib.")
+    parser.add_argument("--checkpoint",
+                        type=str,
+                        default=None,
+                        help="Checkpoint path (optional).")
     subparsers = parser.add_subparsers()
 
     # Train parser
