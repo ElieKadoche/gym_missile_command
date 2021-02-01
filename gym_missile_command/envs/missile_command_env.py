@@ -303,6 +303,7 @@ class MissileCommandEnv(gym.Env):
         # Return everything
         # ------------------------------------------
 
+        self.timestep += 1
         self.reward_total += self.reward_timestep
         return self._process_observation(), self.reward_timestep, done, {}
 
