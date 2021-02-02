@@ -28,3 +28,5 @@ The [RLlib](https://docs.ray.io/en/master/rllib.html) library from the [Ray](htt
 Current implemented algorithms are:
 
 - DQN.
+
+There is a special case for MuZero, in the [./scripts/muzero/](./scripts/muzero/) folder.
