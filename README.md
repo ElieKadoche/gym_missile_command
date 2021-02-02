@@ -8,7 +8,7 @@ Open AI Gym environment of the [Missile Command Atari game](https://en.wikipedia
 
 To easily train and test different bots on the Missile Command Atari game.
 Gym environments are well designed for Reinforcement Learning algorithms.
-You can find some examples in the [./rl](./rl/) folder.
+You can find some examples in the [./rl/](./rl/) folder.
 This environment does not reproduce an exact version of the Missile Command Atari game but a simplified one.
 
 ## Game
