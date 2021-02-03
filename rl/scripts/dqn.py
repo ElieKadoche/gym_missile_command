@@ -21,6 +21,9 @@ class MissileCommand(gym.Env):
     ENV_CONFIG = {
         "ENEMY_MISSILES.NUMBER": 7,
         "ENEMY_MISSILES.PROBA_IN": 0.07,
+        "REWARD.DESTROYED_CITY": -16.67,
+        "REWARD.DESTROYED_ENEMEY_MISSILES": 28.57,
+        "REWARD.FRIENDLY_MISSILE_LAUNCHED": -0.57,
     }
 
     def __init__(self, env_config):
@@ -63,11 +66,14 @@ def create_agent():
     config = dqn.DEFAULT_CONFIG.copy()
     config["framework"] = "torch"
     config["num_gpus"] = 1
-    config["num_workers"] = 14
+    config["num_workers"] = 19
 
     # Agent creation
     agent = dqn.DQNTrainer(env=MissileCommand, config=config)
-    # agent.restore("checkpoint_path")  # To optionally load a checkpoint
+
+    # To optionally load a checkpoint
+    if args.checkpoint:
+        agent.restore(args.checkpoint)
 
     return agent
 
@@ -120,7 +126,7 @@ def train(args):
     # Launch training
     for i in range(args.iter):
         result = agent.train()
-        print(pretty_print(result))
+        # print(pretty_print(result))
 
         if i % 100 == 0:
             checkpoint = agent.save()
@@ -140,7 +146,7 @@ if __name__ == "__main__":
     # Train parser
     train_parser = subparsers.add_parser("train")
     train_parser.add_argument(
-        "--iter", type=int, default=1000, help="Training iteration number.")
+        "--iter", type=int, default=100000000, help="Training iteration number.")
     train_parser.set_defaults(func=train)
 
     # Test parser
