@@ -56,8 +56,11 @@ class MissileCommand(gym.Env):
         self._env.close()
 
 
-def create_agent():
+def create_agent(args):
     """Create DQN agent.
+
+    Args:
+        args (argparse.Namespace): argparse arguments.
 
     Returns:
         agent (ray.rllib.agents.trainer_template.DQN): DQN agent.
@@ -88,7 +91,7 @@ def test(args):
     ray.init()
 
     # Create the agent
-    agent = create_agent()
+    agent = create_agent(args)
 
     # Create the environment
     env = gym.make("gym_missile_command:missile-command-v0",
@@ -121,7 +124,7 @@ def train(args):
     ray.init()
 
     # Create the agent
-    agent = create_agent()
+    agent = create_agent(args)
 
     # Launch training
     for i in range(args.iter):
