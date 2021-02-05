@@ -7,4 +7,4 @@ The [https://github.com/werner-duvaud/muzero-general.git](https://github.com/wer
 
  Here is the game configuration file of Missile Command for `muzero-general`.
  It needs to be placed in the `/games` folder.
- Please refer to the project GitHub for more info.
+ Please refer to the GitHub project for more info.
