@@ -80,7 +80,37 @@ def test(args):
     Args:
         args (argparse.Namespace): argparse arguments.
     """
-    pass
+    # Create the environment
+    env = gym.make("gym_missile_command:missile-command-v0",
+                   custom_config=ENV_CONFIG)
+
+    # Acme part
+    env_acme = make_environmment()
+    env_spec = acme.make_environment_spec(env_acme)
+    network = networks.DQNAtariNetwork(env_spec.actions.num_values)
+    agent = dqn.DQN(env_spec, network)
+
+    # Reset it
+    observation = env.reset()
+
+    # While the episode is not finished
+    done = False
+    while not done:
+
+        # We add alpha to the observation
+        obs_acme = np.full((observation.shape[0], observation.shape[0], 4),
+                           1.0,
+                           dtype=np.float32)
+        obs_acme[:, :, :-1] = observation
+
+        # Agent computes action
+        action = agent.select_action(obs_acme)
+
+        # One step forward
+        observation, reward, done, _ = env.step(action)
+
+        # Render (or not) the environment
+        env.render()
 
 
 def train(args):
