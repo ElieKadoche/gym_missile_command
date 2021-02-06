@@ -108,7 +108,23 @@ def test(args):
     Args:
         args (argparse.Namespace): argparse arguments.
     """
-    pass
+    # Get env and agent
+    env_acme, agent = get_env_agent()
+
+    # Reset it
+    timestep = env_acme.reset()
+
+    # While the episode is not finished
+    while not timestep.last():
+
+        # Agent computes action
+        action = agent.select_action(timestep.observation)
+
+        # One step forward
+        timestep = env_acme.step(action)
+
+        # Render (or not) the environment
+        env_acme.environment.render()
 
 
 def train(args):
