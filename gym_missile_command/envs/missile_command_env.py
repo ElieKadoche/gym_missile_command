@@ -219,7 +219,7 @@ class MissileCommandEnv(gym.Env):
             (CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH),
             interpolation=cv2.INTER_AREA,
         )
-        return processed_observation
+        return processed_observation.astype(CONFIG.DTYPE)
 
     def reset(self):
         """Reset the environment.
