@@ -74,6 +74,26 @@ def make_environmment():
     return environment
 
 
+def get_env_agent():
+    """Create env and agent.
+
+    Returns:
+        env_acme (acme.wrappers.observation_action_reward.
+            ObservationActionRewardWrappe).
+
+        agent (acme.agents.tf.dqn.agent.DQN).
+    """
+    # Get environment
+    env_acme = make_environmment()
+    env_spec = acme.make_environment_spec(env_acme)
+
+    # Create agent and network
+    network = networks.DQNAtariNetwork(env_spec.actions.num_values)
+    agent = dqn.DQN(env_spec, network)
+
+    return env_acme, agent
+
+
 def test(args):
     """Test agent.
 
@@ -84,11 +104,8 @@ def test(args):
     env = gym.make("gym_missile_command:missile-command-v0",
                    custom_config=ENV_CONFIG)
 
-    # Acme part
-    env_acme = make_environmment()
-    env_spec = acme.make_environment_spec(env_acme)
-    network = networks.DQNAtariNetwork(env_spec.actions.num_values)
-    agent = dqn.DQN(env_spec, network)
+    # Get env and agent
+    env_acme, agent = get_env_agent()
 
     # Reset it
     observation = env.reset()
@@ -119,22 +136,11 @@ def train(args):
     Args:
         args (argparse.Namespace): argparse arguments.
     """
-    # Get environment
-    # ------------------------------------------
-
-    env = make_environmment()
-    env_spec = acme.make_environment_spec(env)
-
-    # Create agent and network
-    # ------------------------------------------
-
-    network = networks.DQNAtariNetwork(env_spec.actions.num_values)
-    agent = dqn.DQN(env_spec, network)
+    # Get env and agent
+    env_acme, agent = get_env_agent()
 
     # Launch training
-    # ------------------------------------------
-
-    loop = acme.EnvironmentLoop(env, agent)
+    loop = acme.EnvironmentLoop(env_acme, agent)
     loop.run(args.episodes)
 
 
