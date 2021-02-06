@@ -148,8 +148,10 @@ if __name__ == "__main__":
 
     # Train parser
     train_parser = subparsers.add_parser("train")
-    train_parser.add_argument(
-        "--iter", type=int, default=100000000, help="Training iteration number.")
+    train_parser.add_argument("--iter",
+                              type=int,
+                              default=100000000,
+                              help="Training iteration number.")
     train_parser.set_defaults(func=train)
 
     # Test parser
