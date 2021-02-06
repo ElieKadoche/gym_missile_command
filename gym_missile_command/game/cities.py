@@ -131,10 +131,11 @@ class Cities():
         for x, y, integrity in zip(self.cities[:, 0],
                                    self.cities[:, 1],
                                    self.cities[:, 2]):
-            cv2.circle(
-                img=observation,
-                center=(get_cv2_xy(x, y)),
-                radius=int(CONFIG.CITIES.RADIUS),
-                color=CONFIG.COLORS.CITY,
-                thickness=-1,
-            )
+            if integrity > 0:
+                cv2.circle(
+                    img=observation,
+                    center=(get_cv2_xy(x, y)),
+                    radius=int(CONFIG.CITIES.RADIUS),
+                    color=CONFIG.COLORS.CITY,
+                    thickness=-1,
+                )

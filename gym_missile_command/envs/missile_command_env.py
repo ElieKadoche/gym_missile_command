@@ -136,12 +136,8 @@ class MissileCommandEnv(gym.Env):
         self.reward_timestep += CONFIG.REWARD.DESTROYED_CITY * \
             cities_out.shape[0]
 
-        # Remove these cities
-        self.cities.cities = np.delete(
-            self.cities.cities,
-            np.squeeze(cities_out),
-            axis=0,
-        )
+        # Destroy the cities
+        self.cities.cities[cities_out, 2] -= 1
 
     def _collisions_missiles(self):
         """Check for missiles collisions.
