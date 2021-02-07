@@ -78,7 +78,7 @@ class MuZeroConfig:
         self.selfplay_on_gpu = False
 
         # Maximum number of moves if game is not finished before
-        self.max_moves = 3000
+        self.max_moves = 1150
 
         # Number of future moves self-simulated
         self.num_simulations = 25
