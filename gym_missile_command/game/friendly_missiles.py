@@ -55,16 +55,23 @@ class FriendlyMissiles():
         # Compute speed vectors
         # ------------------------------------------
 
-        # Compute norm
-        norm = np.sqrt(np.square(target.x) + np.square(target.y))
+        # Careful not to divide by 0 if target is in (0, 0)
+        if target.x == self.ORIGIN_X and target.y == self.ORIGIN_Y:
+            vx, vy = 0.0, 0.0
 
-        # Compute unit vectors
-        ux = target.x / norm
-        uy = target.y / norm
+        # We can safely compute speed vectors
+        else:
 
-        # Compute speed vectors
-        vx = CONFIG.FRIENDLY_MISSILES.SPEED * ux
-        vy = CONFIG.FRIENDLY_MISSILES.SPEED * uy
+            # Compute norm
+            norm = np.sqrt(np.square(target.x) + np.square(target.y))
+
+            # Compute unit vectors
+            ux = target.x / norm
+            uy = target.y / norm
+
+            # Compute speed vectors
+            vx = CONFIG.FRIENDLY_MISSILES.SPEED * ux
+            vy = CONFIG.FRIENDLY_MISSILES.SPEED * uy
 
         # Add the new missile
         # ------------------------------------------
