@@ -1,1 +1,2 @@
+dm-acme
 dm-acme[reverb,tf,jax,envs]
