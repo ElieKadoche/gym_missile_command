@@ -1,4 +1,7 @@
-"""R2D2 with Acme."""
+"""R2D2 with Acme.
+
+Checkpoints are saved in ~/acme.
+"""
 
 import argparse
 import functools

@@ -1,4 +1,7 @@
-"""DQN with Acme."""
+"""DQN with Acme.
+
+Checkpoints are saved in ~/acme.
+"""
 
 import argparse
 import functools
@@ -89,7 +92,9 @@ def get_env_agent():
 
     # Create agent and network
     network = networks.DQNAtariNetwork(env_spec.actions.num_values)
-    agent = dqn.DQN(env_spec, network)
+    agent = dqn.DQN(env_spec,
+                    network,
+                    checkpoint_subpath="./acme")
 
     return env_acme, agent
 
