@@ -22,3 +22,7 @@ python ./scripts/XXX.py --help  # Get help
 python ./scripts/XXX.py train  # Launch training
 python ./scripts/XXX.py test  # Launch testing
 ```
+
+## Other environments
+
+As examples, in the [others](./others) folder are scripts to use different RLlib agents on simpler OpenAI Gym environments.
