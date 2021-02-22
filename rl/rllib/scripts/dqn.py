@@ -148,7 +148,7 @@ def train(args):
             print(pretty_print(result))
 
         # Save model
-        if i % args.saving_steps == 0:
+        if i % args.saving_frequency == 0:
             checkpoint = agent.save()
             print("checkpoint saved at", checkpoint)
 
@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
     # Train parser
     train_parser = subparsers.add_parser("train")
-    train_parser.add_argument("--saving-steps",
+    train_parser.add_argument("--saving-frequency",
                               type=int,
                               default=100,
                               help="The model is saved every --saving-steps.",
