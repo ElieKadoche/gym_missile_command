@@ -67,9 +67,13 @@ def create_agent(args):
     """
     # Custom configuration
     config = dqn.DEFAULT_CONFIG.copy()
+    config["double_q"] = True
+    config["dueling"] = True
     config["framework"] = "torch"
+    config["horizon"] = 1150
     config["num_gpus"] = 1
     config["num_workers"] = 19
+    config["train_batch_size"] = 128
 
     # Agent creation
     agent = dqn.DQNTrainer(env=MissileCommand, config=config)
@@ -77,6 +81,14 @@ def create_agent(args):
     # To optionally load a checkpoint
     if args.checkpoint:
         agent.restore(args.checkpoint)
+
+    # Print model
+    if args.verbose > 0:
+        model = agent.get_policy().model
+        if config["framework"] == "tf":
+            print(type(model.base_model.summary()))
+        elif config["framework"] == "torch":
+            print(model)
 
     return agent
 
@@ -110,8 +122,9 @@ def test(args):
         # One step forward
         observation, reward, done, _ = env.step(action)
 
-        # Render (or not) the environment
-        env.render()
+        # Render the environment
+        if args.verbose > 1:
+            env.render()
 
 
 def train(args):
@@ -127,11 +140,15 @@ def train(args):
     agent = create_agent(args)
 
     # Launch training
-    for i in range(args.iter):
+    for i in range(args.training_steps):
         result = agent.train()
-        # print(pretty_print(result))
 
-        if i % 100 == 0:
+        # Print results
+        if args.verbose > 0:
+            print(pretty_print(result))
+
+        # Save model
+        if i % args.saving_steps == 0:
             checkpoint = agent.save()
             print("checkpoint saved at", checkpoint)
 
@@ -141,17 +158,31 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="DQN agent training and testing with RLlib.")
     parser.add_argument("--checkpoint",
-                        type=str,
                         default=None,
-                        help="Checkpoint path (optional).")
+                        help="Checkpoint path (optional).",
+                        required=False,
+                        type=str)
+    parser.add_argument("-v",
+                        "--verbose",
+                        choices=range(3),
+                        default=0,
+                        help="Verbose mode, 0 (nothing) and 2 (everything).",
+                        required=False,
+                        type=int)
     subparsers = parser.add_subparsers()
 
     # Train parser
     train_parser = subparsers.add_parser("train")
-    train_parser.add_argument("--iter",
+    train_parser.add_argument("--saving-steps",
                               type=int,
-                              default=100000000,
-                              help="Training iteration number.")
+                              default=100,
+                              help="The model is saved every --saving-steps.",
+                              required=False)
+    train_parser.add_argument("--training-steps",
+                              type=int,
+                              default=1000000,
+                              help="Training iteration number.",
+                              required=False)
     train_parser.set_defaults(func=train)
 
     # Test parser
