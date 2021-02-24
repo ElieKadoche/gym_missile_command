@@ -1,4 +1,7 @@
-"""Actor-critic coded from scratch."""
+"""Actor-critic coded from scratch.
+
+Mostly inspired from https://github.com/pytorch/examples.git.
+"""
 
 import argparse
 import os.path
@@ -13,20 +16,45 @@ from torch import optim as optim
 from torch.distributions import Categorical
 from torch.nn import functional as F
 
+# Custom configuration
+ENV_CONFIG = {
+    "ENEMY_MISSILES.NUMBER": 7,
+    "ENEMY_MISSILES.PROBA_IN": 0.07,
+    "REWARD.DESTROYED_CITY": -16.67,
+    "REWARD.DESTROYED_ENEMEY_MISSILES": 28.57,
+    "REWARD.FRIENDLY_MISSILE_LAUNCHED": -0.57,
+}
+
 
 class Model(nn.Module):
-    """Actor and critic model for CartPole."""
+    """Actor and critic model."""
 
     def __init__(self):
         """Initialize model."""
         super(Model, self).__init__()
-        self.fc0 = nn.Linear(4, 128)
+
+        # Convolutional layers
+        self.conv0 = nn.Conv2d(in_channels=3,
+                               out_channels=32,
+                               kernel_size=8,
+                               stride=4)
+        self.conv1 = nn.Conv2d(in_channels=32,
+                               out_channels=64,
+                               kernel_size=4,
+                               stride=2)
+        self.conv2 = nn.Conv2d(in_channels=64,
+                               out_channels=64,
+                               kernel_size=2,
+                               stride=1)
+
+        # Linear layers
+        self.fc0 = nn.Linear(64 * 8 * 8, 512)
 
         # Actor's layer (policy)
-        self.action_head = nn.Linear(128, 2)
+        self.action_head = nn.Linear(512, 6)
 
         # Critic's layer (value)
-        self.value_head = nn.Linear(128, 1)
+        self.value_head = nn.Linear(512, 1)
 
     def _preprocessor(self, observation):
         """Preprocessor function.
@@ -37,6 +65,12 @@ class Model(nn.Module):
         Returns:
             x (torch.tensor): preprocessed observations.
         """
+        # Keep values between 0 and 1
+        observation[[0, 1], :] /= 255
+
+        # PyTorch takes input of shape (N, C, H, W)
+        observation = np.transpose(observation, (-1, 0, 1))
+
         # Add batch dimension
         x = np.expand_dims(observation, 0)
 
@@ -47,6 +81,9 @@ class Model(nn.Module):
 
     def forward(self, x):
         """Forward pass.
+
+        Examples of shape are given with N being the batch size and height and
+            width being equal to 84.
 
         Args:
             x (numpy.array): environment observations.
@@ -60,8 +97,11 @@ class Model(nn.Module):
         # Preprocessor
         x = self._preprocessor(x)
 
-        # Input layer
-        x = F.relu(self.fc0(x))
+        x = F.relu(self.conv0(x))  # (N, 32, 20, 20) shape
+        x = F.relu(self.conv1(x))  # (N, 64, 9, 9) shape
+        x = F.relu(self.conv2(x))  # (N, 64, 8, 8) shape
+        x = x.view(-1, 64 * 8 * 8)  # (N, 4096) shape
+        x = F.relu(self.fc0(x))  # (N, 512) shape
 
         # Actor head
         action_prob = F.softmax(self.action_head(x), dim=-1)
@@ -105,7 +145,8 @@ def test(args):
     model.eval()
 
     # Create the environment
-    env = gym.make("CartPole-v1")
+    env = gym.make("gym_missile_command:missile-command-v0",
+                   custom_config=ENV_CONFIG)
 
     while True:
 
@@ -144,10 +185,11 @@ def train(args):
     model.train()
 
     # Create the environment
-    env = gym.make("CartPole-v1")
+    env = gym.make("gym_missile_command:missile-command-v0",
+                   custom_config=ENV_CONFIG)
 
     gamma = 0.99  # Discount factor
-    horizon = 10000  # Max environment length
+    horizon = 1150  # Max environment length
 
     eps = np.finfo(np.float32).eps.item()
     optimizer = optim.Adam(model.parameters(), lr=3e-2)
