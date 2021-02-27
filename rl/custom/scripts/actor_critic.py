@@ -16,6 +16,9 @@ from torch import optim as optim
 from torch.distributions import Categorical
 from torch.nn import functional as F
 
+# By default, use CPU
+DEVICE = torch.device("cpu")
+
 # Custom configuration
 ENV_CONFIG = {
     "ENEMY_MISSILES.NUMBER": 7,
@@ -75,7 +78,7 @@ class Model(nn.Module):
         x = np.expand_dims(observation, 0)
 
         # Transform to torch.tensor
-        x = torch.from_numpy(x).float()
+        x = torch.from_numpy(x).float().to(DEVICE)
 
         return x
 
@@ -121,11 +124,11 @@ def create_model(args):
     Returns:
         model (PyTorch model): actor-critic neural network.
     """
-    model = Model()
+    model = Model().to(DEVICE)
 
     # To optionally load a checkpoint
     if os.path.isfile(args.checkpoint):
-        model = torch.load(args.checkpoint)
+        model = torch.load(args.checkpoint).to(DEVICE)
 
     # Print model
     if args.verbose > 0:
@@ -264,7 +267,7 @@ def train(args):
 
             # Calculate critic (value) loss using L1 smooth loss
             value_losses.append(F.smooth_l1_loss(
-                value, torch.tensor([R], dtype=torch.float32)))
+                value, torch.tensor([R], dtype=torch.float32, device=DEVICE)))
 
         # Reset gradients
         optimizer.zero_grad()
@@ -296,6 +299,10 @@ if __name__ == "__main__":
                         help="Checkpoint path (optional).",
                         required=False,
                         type=str)
+    parser.add_argument("--cuda",
+                        action="store_true",
+                        help="Use CUDA.",
+                        required=False)
     parser.add_argument("-v",
                         "--verbose",
                         choices=range(3),
@@ -323,6 +330,12 @@ if __name__ == "__main__":
     test_parser = subparsers.add_parser("test")
     test_parser.set_defaults(func=test)
 
-    # Launch script
+    # Parse arguments
     args = parser.parse_args()
+
+    # Select device
+    use_cuda = args.cuda and torch.cuda.is_available()
+    DEVICE = torch.device("cuda" if use_cuda else "cpu")
+
+    # Launch script
     args.func(args)
