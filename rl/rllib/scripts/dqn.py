@@ -117,7 +117,7 @@ def test(args):
     while not done:
 
         # Agent computes action
-        action = agent.compute_action(observation)
+        action = agent.compute_action(observation, explore=False)
 
         # One step forward
         observation, reward, done, _ = env.step(action)
