@@ -1,2 +1,0 @@
-dm-acme[reverb,tf,jax,envs]
-tensorboard
