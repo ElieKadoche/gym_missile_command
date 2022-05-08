@@ -7,7 +7,6 @@ setup(
     version="1.1",
     author="Elie KADOCHE",
     author_email="eliekadoche78@gmail.com",
-    package_dir={"": "gym_missile_command"},
     install_requires=["gym", "numpy", "opencv-python", "pygame"],
     description="Gym environment of the Atari game, Missile Command.",
     url="https://github.com/ElieKadoche/gym_missile_command.git",
