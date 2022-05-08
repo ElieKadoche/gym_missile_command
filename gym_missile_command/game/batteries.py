@@ -12,21 +12,19 @@ class Batteries():
 
     Attributes:
         NB_BATTERY (int): the number of batteries. It only supports 1 battery.
+
+        batteries (numpy array): of size (N, 1) with N the number of batteries,
+            i.d., 1. The feature is: (0) number of available missiles.
+        nb_missiles_launched (int): the number of missiles launched.
     """
+
     NB_BATTERIES = 1
 
     def __init__(self):
-        """Initialize 1 battery.
-
-        Attributes:
-            batteries (numpy array): of size (N, 1) with N the number of
-                batteries, i.d. 1. The feature is: (0) number of available
-                missiles.
-            nb_missiles_launched (int): the number of missiles launched.
-        """
+        """Initialize 1 battery."""
         self.batteries = np.zeros((self.NB_BATTERIES, 1), dtype=CONFIG.DTYPE)
 
-    def reset(self):
+    def reset(self, seed=None):
         """Reset batteries.
 
         Total number of missiles is reset to default.
@@ -34,6 +32,9 @@ class Batteries():
         Warning:
             To fully initialize a Batteries object, init function and reset
             function musts be called.
+
+        Args:
+            seed (int): seed for reproducibility.
         """
         self.batteries[:, 0] = CONFIG.FRIENDLY_MISSILES.NUMBER
         self.nb_missiles_launched = 0
@@ -78,7 +79,7 @@ class Batteries():
         """
         cv2.circle(
             img=observation,
-            center=(get_cv2_xy(0.0, 0.0)),
+            center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, 0.0, 0.0)),
             radius=int(CONFIG.BATTERY.RADIUS),
             color=CONFIG.COLORS.BATTERY,
             thickness=-1,

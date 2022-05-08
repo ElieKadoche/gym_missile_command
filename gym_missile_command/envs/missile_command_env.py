@@ -1,23 +1,17 @@
 """Main environment class."""
-import contextlib
-import sys
 
 import cv2
 import gym
 import numpy as np
+import pygame
 from gym import spaces
 
-from gym_missile_command.config import CONFIG
+from gym_missile_command.config import CONFIG, update_config
 from gym_missile_command.game.batteries import Batteries
 from gym_missile_command.game.cities import Cities
 from gym_missile_command.game.enemy_missiles import EnemyMissiles
 from gym_missile_command.game.friendly_missiles import FriendlyMissiles
 from gym_missile_command.game.target import Target
-from gym_missile_command.utils import rgetattr, rsetattr
-
-# Import Pygame and remove welcome message
-with contextlib.redirect_stdout(None):
-    import pygame
 
 
 class MissileCommandEnv(gym.Env):
@@ -27,41 +21,42 @@ class MissileCommandEnv(gym.Env):
         NB_ACTIONS (int): the 6 possible actions. (0) do nothing, (1) target
             up, (2) target down, (3) target left, (4) target right, (5) fire
             missile.
-        metadata (dict): OpenAI Gym dictionary with the "render.modes" key.
-    """
-    NB_ACTIONS = 6
-    metadata = {"render.modes": ["human", "rgb_array"],
-                'video.frames_per_second': CONFIG.FPS}
 
-    def __init__(self, custom_config={}):
-        """Initialize MissileCommand environment.
+        action_space (gym.spaces.discrete.Discrete): OpenAI Gym action space.
+        observation_space (gym.spaces.Box): OpenAI Gym observation space.
+        reward_range (tuple): reward range.
+
+        batteries (Batteries): Batteries game object.
+        cities (Cities): Cities game object.
+        enemy_missiles (EnemyMissiles): EnemyMissiles game object.
+        friendly_missiles (FriendlyMissiles): FriendlyMissiles game object.
+
+        observation (numpy.array): of size (CONFIG.WIDTH, CONFIG.HEIGHT, 3).
+            The observation of the current time step, representing the RGB
+            values of each pixel.
+        reward (float): reward of the current time step.
+        reward_total (float): reward sum from first time step to current one.
+        time_step (int): current time step, starts from 0.
+    """
+
+    NB_ACTIONS = 6
+
+    def __init__(self, env_context=None):
+        """Initialize environment.
 
         Args:
-            custom_config (dict): optional, custom configuration dictionary
-                with configuration attributes (strings) as keys (for example
+            env_context (dict): optional, custom configuration dictionary
+                with configuration attributes (strings) as keys (e.g.,
                 "FRIENDLY_MISSILES.NUMBER") and values as... Well, values (for
                 example 42).
-
-        Attributes:
-            action_space (gym.spaces.discrete.Discrete): OpenAI Gym action
-                space.
-            batteries (Batteries): Batteries game object.
-            cities (Cities): Cities game object.
-            clock (pygame.time.Clock): Pygame clock.
-            display (pygame.Surface): pygame surface, only for the render
-                method.
-            enemy_missiles (EnemyMissiles): EnemyMissiles game object.
-            friendly_missiles (FriendlyMissiles): FriendlyMissiles game object.
-            observation (numpy.array): of size (CONFIG.WIDTH, CONFIG.HEIGHT,
-                3). The observation of the current timestep, representing the
-                RGB values of each pixel.
-            observation_space (gym.spaces.Box): OpenAI Gym observation space.
-            reward_timestep (float): reward of the current timestep.
-            reward_total (float): reward sum from first timestep to current
-                one.
-            timestep (int): current timestep, starts from 0.
         """
         super(MissileCommandEnv, self).__init__()
+
+        # Update configuration
+        if env_context is not None:
+            update_config(env_context)
+
+        # Action and observation spaces
         self.action_space = spaces.Discrete(self.NB_ACTIONS)
         self.observation_space = spaces.Box(
             low=0,
@@ -70,28 +65,8 @@ class MissileCommandEnv(gym.Env):
             dtype=np.uint8,
         )
 
-        # Custom configuration
-        # ------------------------------------------
-
-        # For each custom attributes
-        for key, value in custom_config.items():
-
-            # Check if attributes is valid
-            try:
-                _ = rgetattr(CONFIG, key)
-            except AttributeError as e:
-                print("Invalid custom configuration: {}".format(e))
-                sys.exit(1)
-
-            # Modify it
-            rsetattr(CONFIG, key, value)
-
-        # Initializing objects
-        # ------------------------------------------
-
-        # No display while no render
-        self.clock = None
-        self.display = None
+        # TODO: compute reward bounds
+        self.reward_range = (-float("inf"), float("inf"))
 
         # Objects
         self.batteries = Batteries()
@@ -99,6 +74,10 @@ class MissileCommandEnv(gym.Env):
         self.enemy_missiles = EnemyMissiles()
         self.friendly_missiles = FriendlyMissiles()
         self.target = Target()
+
+        # No display while no render
+        self._clock = None
+        self._display = None
 
     def _collisions_cities(self):
         """Check for cities collisions.
@@ -132,8 +111,8 @@ class MissileCommandEnv(gym.Env):
             (cities[:, 2] > 0.0)
         )
 
-        # Update timestep reward
-        self.reward_timestep += CONFIG.REWARD.DESTROYED_CITY * \
+        # Update time step reward
+        self.reward += CONFIG.REWARD.DESTROYED_CITY * \
             cities_out.shape[0]
 
         # Destroy the cities
@@ -171,7 +150,7 @@ class MissileCommandEnv(gym.Env):
             (enemy_missiles.shape[0], friendly_exploding.shape[0]),
         )
 
-        # Remove theses missiles
+        # Remove these missiles
         missiles_out = np.argwhere(np.sum(inside_radius, axis=1) >= 1)
         self.enemy_missiles.enemy_missiles = np.delete(
             self.enemy_missiles.enemy_missiles,
@@ -181,7 +160,7 @@ class MissileCommandEnv(gym.Env):
 
         # Compute current reward
         nb_missiles_destroyed = missiles_out.shape[0]
-        self.reward_timestep += CONFIG.REWARD.DESTROYED_ENEMEY_MISSILES * \
+        self.reward += CONFIG.REWARD.DESTROYED_ENEMEY_MISSILES * \
             nb_missiles_destroyed
 
     def _compute_observation(self):
@@ -207,13 +186,14 @@ class MissileCommandEnv(gym.Env):
         commodity this environment can do it directly.
 
         The interpolation mode INTER_AREA seems to give the best results. With
-        other methods, every objects could not be seen at all timesteps.
+        other methods, every objects could not be seen at all time steps.
 
         Returns:
             processed_observation (numpy.array): of size
                 (CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH, 3), the
                 resized (or not) observation.
         """
+        # Process observation
         processed_observation = cv2.resize(
             self.observation,
             (CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH),
@@ -221,23 +201,26 @@ class MissileCommandEnv(gym.Env):
         )
         return processed_observation.astype(CONFIG.DTYPE)
 
-    def reset(self):
+    def reset(self, seed=None):
         """Reset the environment.
+
+        Args:
+            seed (int): seed for reproducibility.
 
         Returns:
             observation (numpy.array): the processed observation.
         """
-        # Reset timestep and rewards
-        self.timestep = 0
+        # Reset time step and rewards
+        self.time_step = 0
         self.reward_total = 0.0
-        self.reward_timestep = 0.0
+        self.reward = 0.0
 
         # Reset objects
-        self.batteries.reset()
-        self.cities.reset()
-        self.enemy_missiles.reset()
-        self.friendly_missiles.reset()
-        self.target.reset()
+        self.batteries.reset(seed=seed)
+        self.cities.reset(seed=seed)
+        self.enemy_missiles.reset(seed=seed)
+        self.friendly_missiles.reset(seed=seed)
+        self.target.reset(seed=seed)
 
         # Compute observation
         self._compute_observation()
@@ -260,13 +243,9 @@ class MissileCommandEnv(gym.Env):
             info (dict): additional information on the current time step.
         """
         # Reset current reward
-        # ------------------------------------------
-
-        self.reward_timestep = 0.0
+        self.reward = 0.0
 
         # Step functions
-        # ------------------------------------------
-
         _, battery_reward, _, can_fire_dict = self.batteries.step(action)
         _, _, done_cities, _ = self.cities.step(action)
         _, _, done_enemy_missiles, _ = self.enemy_missiles.step(action)
@@ -274,78 +253,66 @@ class MissileCommandEnv(gym.Env):
         _, _, _, _ = self.target.step(action)
 
         # Launch a new missile
-        # ------------------------------------------
-
         if action == 5 and can_fire_dict["can_fire"]:
             self.friendly_missiles.launch_missile(self.target)
-            self.reward_timestep += CONFIG.REWARD.FRIENDLY_MISSILE_LAUNCHED
+            self.reward += CONFIG.REWARD.FRIENDLY_MISSILE_LAUNCHED
 
         # Check for collisions
-        # ------------------------------------------
-
         self._collisions_missiles()
         self._collisions_cities()
 
         # Check if episode is finished
-        # ------------------------------------------
-
         done = done_cities or done_enemy_missiles
 
-        # Render every objects
-        # ------------------------------------------
-
+        # Compute observation
         self._compute_observation()
 
-        # Return everything
-        # ------------------------------------------
+        # Update values
+        self.time_step += 1
+        self.reward_total += self.reward
 
-        self.timestep += 1
-        self.reward_total += self.reward_timestep
-        return self._process_observation(), self.reward_timestep, done, {}
+        return self._process_observation(), self.reward, done, {}
 
-    def render(self, mode="rgb_array"):
+    def render(self, mode="raw_observation"):
         """Render the environment.
 
         This function renders the environment observation. To check what the
         processed observation looks like, it can also renders it.
 
         Args:
-            mode (str): the render mode. Possible values are "rgb_array" and
-                "processed_observation".
+            mode (str): the render mode. Possible values are "raw_observation"
+                and "processed_observation".
         """
-        if not self.display:
+        # Get width and height
+        w, h = CONFIG.WIDTH, CONFIG.HEIGHT
+
+        # Initialize PyGame
+        if self._display is None:
             pygame.init()
             pygame.mouse.set_visible(False)
-            self.clock = pygame.time.Clock()
+            self._clock = pygame.time.Clock()
             pygame.display.set_caption("MissileCommand")
+            self._display = pygame.display.set_mode((w, h))
 
-        # Display the normal observation
-        if mode == "rgb_array":
-            self.display = pygame.display.set_mode(
-                (CONFIG.WIDTH, CONFIG.HEIGHT))
-            surface = pygame.surfarray.make_surface(self.observation)
+        # For debug only, display processed observation
+        if mode == "processed_observation":
+            observation = self._process_observation()
+            surface = pygame.surfarray.make_surface(observation)
+            surface = pygame.transform.scale(surface, (h, w))
 
-        # Display the processed observation
-        elif mode == "processed_observation":
-            self.display = pygame.display.set_mode((
-                CONFIG.OBSERVATION.RENDER_PROCESSED_HEIGHT,
-                CONFIG.OBSERVATION.RENDER_PROCESSED_WIDTH,
-            ))
-            surface = pygame.surfarray.make_surface(
-                self._process_observation())
-            surface = pygame.transform.scale(
-                surface,
-                (CONFIG.OBSERVATION.RENDER_PROCESSED_HEIGHT,
-                 CONFIG.OBSERVATION.RENDER_PROCESSED_WIDTH),
-            )
+        # Normal mode
+        else:
+            observation = self.observation
+            surface = pygame.surfarray.make_surface(observation)
 
-        self.display.blit(surface, (0, 0))
+        # Display all
+        self._display.blit(surface, (0, 0))
         pygame.display.update()
 
-        # Limix max FPS
-        self.clock.tick(CONFIG.FPS)
+        # Limit max FPS
+        self._clock.tick(CONFIG.FPS)
 
     def close(self):
         """Close the environment."""
-        if self.display:
+        if self._display is not None:
             pygame.quit()

@@ -15,6 +15,15 @@ class FriendlyMissiles():
     Attributes:
         ORIGIN_X (float): x origin position of the anti-missiles battery.
         ORIGIN_Y (float): y origin position of the anti-missiles battery.
+
+        missiles_movement (numpy array): of size (N, 6) with N the number of
+            missiles in movement in the environment. The features are: (0)
+            current x position, (1) current y position, (2) final x position,
+            (3) final y position, (4) horizontal speed vx and (5) vertical
+            speed (vy).
+        missiles_explosion (numpy array): of size (M, 3) with M the number of
+            missiles in explosion. The features are: (0) x position, (1) y
+            position and (2) explosion level.
     """
 
     ORIGIN_X = 0.0
@@ -26,16 +35,6 @@ class FriendlyMissiles():
         Notes:
             No need to keep trace of the origin fire position because all
             missiles are launched from the origin (0, 0).
-
-        Attributes:
-            missiles_movement (numpy array): of size (N, 6) with N the number
-                of missiles in movement in the environment. The features are:
-                (0) current x position, (1) current y position, (2) final x
-                position, (3) final y position, (4) horizontal speed vx and (5)
-                vertical speed (vy).
-            missiles_explosion (numpy array): of size (M, 3) with M the number
-                of missiles in explosion. The features are: (0) x position, (1)
-                y position and (2) explosion level.
         """
         pass
 
@@ -46,8 +45,8 @@ class FriendlyMissiles():
         - 1) Add the new missile.
 
         Notes:
-            When executing this function, not forget to decrease the number
-            of available missiles of the anti-missiles battery by 1.
+            When executing this function, not forget to decrease the number of
+            available missiles of the anti-missiles battery by 1.
 
         Args:
             target (Target): Target object.
@@ -86,12 +85,15 @@ class FriendlyMissiles():
         self.missiles_movement = np.vstack(
             (self.missiles_movement, new_missile))
 
-    def reset(self):
+    def reset(self, seed=None):
         """Reset friendly missiles.
 
         Warning:
             To fully initialize a FriendlyMissiles object, init function and
             reset function must be called.
+
+        Args:
+            seed (int): seed for reproducibility.
         """
         self.missiles_movement = np.zeros((0, 6), dtype=CONFIG.DTYPE)
         self.missiles_explosion = np.zeros((0, 3), dtype=CONFIG.DTYPE)
@@ -122,7 +124,7 @@ class FriendlyMissiles():
             reward: None.
 
             done: None.
-1
+
             info: None.
         """
         # Moving missiles
@@ -208,8 +210,8 @@ class FriendlyMissiles():
 
         Args:
             observation (numpy.array): the current environment observation
-                representing the pixels. See the object description in the
-                main environment class for information.
+                representing the pixels. See the object description in the main
+                environment class for information.
         """
         # Moving missiles
         # ------------------------------------------
@@ -218,15 +220,15 @@ class FriendlyMissiles():
                         self.missiles_movement[:, 1]):
             cv2.line(
                 img=observation,
-                pt1=(get_cv2_xy(0.0, 0.0)),
-                pt2=(get_cv2_xy(x, y)),
+                pt1=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, 0.0, 0.0)),
+                pt2=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
                 color=CONFIG.COLORS.FRIENDLY_MISSILE,
                 thickness=1,
             )
 
             cv2.circle(
                 img=observation,
-                center=(get_cv2_xy(x, y)),
+                center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
                 radius=int(CONFIG.FRIENDLY_MISSILES.RADIUS),
                 color=CONFIG.COLORS.FRIENDLY_MISSILE,
                 thickness=-1,
@@ -240,7 +242,7 @@ class FriendlyMissiles():
                                    self.missiles_explosion[:, 2]):
             cv2.circle(
                 img=observation,
-                center=(get_cv2_xy(x, y)),
+                center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
                 radius=int(explosion),
                 color=CONFIG.COLORS.EXPLOSION,
                 thickness=-1,

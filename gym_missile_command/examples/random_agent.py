@@ -4,10 +4,10 @@ import gym
 
 if __name__ == "__main__":
     # Create the environment
-    env = gym.make("gym_missile_command:missile-command-v0")
+    env = gym.make("missile-command-v0")
 
     # Reset it
-    observation = env.reset()
+    observation = env.reset(seed=None)
 
     # While the episode is not finished
     done = False

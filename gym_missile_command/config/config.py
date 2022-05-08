@@ -15,6 +15,7 @@ class CONFIG():
         HEIGHT (int): environment height.
         WIDTH (int): environment width.
     """
+
     DTYPE: np.dtype = np.float32
     FPS: int = 144
     HEIGHT: int = 466
@@ -27,6 +28,7 @@ class CONFIG():
         Attributes:
             RADIUS (float): radius of the anti-missile battery object.
         """
+
         RADIUS: float = 37.0
 
     @dataclass
@@ -37,6 +39,7 @@ class CONFIG():
             NUMBER (int): number of cities to defend (even integer >= 2).
             RADIUS (float): radius of a city object.
         """
+
         NUMBER: int = 6
         RADIUS: float = 24.0
 
@@ -53,6 +56,7 @@ class CONFIG():
             FRIENDLY_MISSILE (tuple): #00ff00.
             TARGET (tuple): #ffffff.
         """
+
         BACKGROUND: tuple = (0, 0, 0)
         BATTERY: tuple = (255, 255, 255)
         CITY: tuple = (0, 0, 255)
@@ -72,6 +76,7 @@ class CONFIG():
             RADIUS (float): radius of an enemy missile object.
             SPEED (float): enemy missile speed.
         """
+
         NUMBER: int = 19
         PROBA_IN: float = 0.005
         RADIUS: float = 4.0
@@ -88,6 +93,7 @@ class CONFIG():
             RADIUS (float): radius of a friendly missile object.
             SPEED (float): friendly missile speed.
         """
+
         NUMBER: int = 142
         EXPLOSION_RADIUS: float = 37.0
         EXPLOSION_SPEED: float = 0.5
@@ -119,6 +125,7 @@ class CONFIG():
                 processed observation.
             WIDTH (float): observation width.
         """
+
         HEIGHT: float = 84
         RENDER_PROCESSED_HEIGHT = 250
         RENDER_PROCESSED_WIDTH = 250
@@ -132,9 +139,10 @@ class CONFIG():
             DESTROYED_CITY (float): reward for each destroyed city.
             DESTROYED_ENEMEY_MISSILES (float): reward for each destroyed
                 missile.
-            FRIENDLY_MISSILE_LAUNCHED (float); reward for each friendly
-                missile launched.
+            FRIENDLY_MISSILE_LAUNCHED (float); reward for each friendly missile
+                launched.
         """
+
         DESTROYED_CITY: float = -10.0
         DESTROYED_ENEMEY_MISSILES: float = 15.0
         FRIENDLY_MISSILE_LAUNCHED: float = -4.0
@@ -148,6 +156,7 @@ class CONFIG():
             VX (int): horizontal shifting of the target.
             VY (int): vertical shifting of the target.
         """
+
         SIZE: int = 12
         VX: int = 4
         VY: int = 4

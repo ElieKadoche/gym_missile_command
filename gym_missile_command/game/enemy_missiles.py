@@ -1,6 +1,6 @@
 """Enemy missiles."""
 
-import random
+from random import Random
 
 import cv2
 import numpy as np
@@ -13,21 +13,19 @@ class EnemyMissiles():
     """Enemy missiles class.
 
     Enemy missiles are created by the environment.
+
+    Attributes:
+        enemy_missiles (numpy array): of size (N, 8)  with N the number of
+            enemy missiles present in the environment. The features are: (0)
+            initial x position, (1) initial y position, (2) current x position,
+            (3) current y position, (4) final x position, (5) final y position,
+            (6) horizontal speed vx and (7) vertical speed vy.
+        nb_missiles_launched (int): the number of enemy missiles launched in
+            the environment.
     """
 
     def __init__(self):
-        """Initialize missiles.
-
-        Attributes:
-            enemy_missiles (numpy array): of size (N, 8)  with N the number of
-                enemy missiles present in the environment. The features are:
-                (0) initial x position, (1) initial y position, (2) current x
-                position, (3) current y position, (4) final x position, (5)
-                final y position, (6) horizontal speed vx and (7) vertical
-                speed vy.
-            nb_missiles_launched (int): the number of enemy missiles launched
-                in the environment.
-        """
+        """Initialize missiles."""
         pass
 
     def _launch_missile(self):
@@ -41,11 +39,11 @@ class EnemyMissiles():
         # ------------------------------------------
 
         # Initial position
-        x0 = random.uniform(-0.5 * CONFIG.WIDTH, 0.5 * CONFIG.WIDTH)
+        x0 = self._rng_python.uniform(-0.5 * CONFIG.WIDTH, 0.5 * CONFIG.WIDTH)
         y0 = CONFIG.HEIGHT
 
         # Final position
-        x1 = random.uniform(-0.5 * CONFIG.WIDTH, 0.5 * CONFIG.WIDTH)
+        x1 = self._rng_python.uniform(-0.5 * CONFIG.WIDTH, 0.5 * CONFIG.WIDTH)
         y1 = 0.0
 
         # Compute speed vectors
@@ -78,15 +76,21 @@ class EnemyMissiles():
         # Increase number of launched missiles
         self.nb_missiles_launched += 1
 
-    def reset(self):
+    def reset(self, seed=None):
         """Reset enemy missiles.
 
         Warning:
             To fully initialize a EnemyMissiles object, init function and reset
             function must be called.
+
+        Args:
+            seed (int): seed for reproducibility.
         """
         self.enemy_missiles = np.zeros((0, 8), dtype=CONFIG.DTYPE)
         self.nb_missiles_launched = 0
+
+        # Create random numbers generator
+        self._rng_python = Random(seed)
 
     def step(self, action):
         """Go from current step to next one.
@@ -141,7 +145,7 @@ class EnemyMissiles():
         # ------------------------------------------
 
         if self.nb_missiles_launched < CONFIG.ENEMY_MISSILES.NUMBER:
-            if random.random() <= CONFIG.ENEMY_MISSILES.PROBA_IN:
+            if self._rng_python.random() <= CONFIG.ENEMY_MISSILES.PROBA_IN:
                 self._launch_missile()
 
         # Remove missiles that hit the ground
@@ -176,15 +180,15 @@ class EnemyMissiles():
                                 self.enemy_missiles[:, 3]):
             cv2.line(
                 img=observation,
-                pt1=(get_cv2_xy(x0, y0)),
-                pt2=(get_cv2_xy(x, y)),
+                pt1=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x0, y0)),
+                pt2=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
                 color=CONFIG.COLORS.ENEMY_MISSILE,
                 thickness=1,
             )
 
             cv2.circle(
                 img=observation,
-                center=(get_cv2_xy(x, y)),
+                center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
                 radius=int(CONFIG.ENEMY_MISSILES.RADIUS),
                 color=CONFIG.COLORS.ENEMY_MISSILE,
                 thickness=-1,

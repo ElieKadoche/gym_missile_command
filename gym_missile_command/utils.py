@@ -1,11 +1,7 @@
 """Useful functions."""
 
-import functools
 
-from gym_missile_command.config import CONFIG
-
-
-def get_cv2_xy(x, y):
+def get_cv2_xy(height, width, x, y):
     """Transform x environment position into x opencv position.
 
     The origin of the environment is the anti-missiles battery, placed in the
@@ -14,6 +10,8 @@ def get_cv2_xy(x, y):
     written (y, x) and not (x, y) like for the environment.
 
     Args:
+        height (float): environment height.
+        width (float): environment width.
         x (float): x environment coordinate.
         y (float): y environment coordinate.
 
@@ -22,17 +20,4 @@ def get_cv2_xy(x, y):
 
         x (int): x opencv coordinate.
     """
-    return int(CONFIG.HEIGHT - y), int(x + (CONFIG.WIDTH / 2))
-
-
-def rgetattr(obj, attr, *args):
-    """Recursive getattr function."""
-    def _getattr(obj, attr):
-        return getattr(obj, attr, *args)
-    return functools.reduce(_getattr, [obj] + attr.split('.'))
-
-
-def rsetattr(obj, attr, val):
-    """Recursive setattr function."""
-    pre, _, post = attr.rpartition('.')
-    return setattr(rgetattr(obj, pre) if pre else obj, post, val)
+    return int(height - y), int(x + (width / 2))

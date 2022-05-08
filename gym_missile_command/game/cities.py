@@ -16,17 +16,16 @@ class Cities():
         MAX_HEALTH (float): value corresponding to the max health of a city.
             Each time an enemy missile destroys a city, it loses 1 point of
             heath. At 0, the city is completely destroyed.
+
+        cities (numpy array): of size (N, 3) with N the number of cities. The
+            features are: (0) x position, (1) y position and (2) integrity
+            level (0 if destroyed else 1).
     """
+
     MAX_HEALTH = 1.0
 
     def __init__(self):
-        """Initialize cities.
-
-        Attributes:
-            cities (numpy array): of size (N, 3) with N the number of cities.
-                The features are: (0) x position, (1) y position and (2)
-                integrity level (0 if destroyed else 1).
-        """
+        """Initialize cities."""
         # First initializations
         # ------------------------------------------
 
@@ -83,14 +82,17 @@ class Cities():
         """
         return np.sum(self.cities[:, 2] == self.MAX_HEALTH)
 
-    def reset(self):
-        """Reset cities.
+    def reset(self, seed=None):
+        """Reset the environment.
 
         Integrity is reset to 1 for all cities.
 
         Warning:
             To fully initialize a Cities object, init function and reset
             function musts be called.
+
+        Args:
+            seed (int): seed for reproducibility.
         """
         self.cities[:, 2] = self.MAX_HEALTH
 
@@ -134,7 +136,7 @@ class Cities():
             if integrity > 0:
                 cv2.circle(
                     img=observation,
-                    center=(get_cv2_xy(x, y)),
+                    center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
                     radius=int(CONFIG.CITIES.RADIUS),
                     color=CONFIG.COLORS.CITY,
                     thickness=-1,

@@ -1,30 +1,32 @@
 """Target."""
 
 import cv2
-import numpy as np
 
 from gym_missile_command.config import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
 class Target():
-    """Target class."""
+    """Target class.
+
+    Attributes:
+        x (float): x position.
+        y (float): y position.
+    """
 
     def __init__(self):
-        """Initialize target.
-
-        Attributes:
-            x (float): x position.
-            y (float): y position.
-        """
+        """Initialize target."""
         pass
 
-    def reset(self):
+    def reset(self, seed=None):
         """Reset target.
 
         Warning:
             To fully initialize a Batteries object, init function and reset
             function musts be called.
+
+        Args:
+            seed (int): seed for reproducibility.
         """
         self.x = 0.0
         self.y = CONFIG.HEIGHT / 2
@@ -73,8 +75,14 @@ class Target():
         # Horizontal
         cv2.line(
             img=observation,
-            pt1=(get_cv2_xy(self.x - CONFIG.TARGET.SIZE, self.y)),
-            pt2=(get_cv2_xy(self.x + CONFIG.TARGET.SIZE, self.y)),
+            pt1=(get_cv2_xy(CONFIG.HEIGHT,
+                            CONFIG.WIDTH,
+                            self.x - CONFIG.TARGET.SIZE,
+                            self.y)),
+            pt2=(get_cv2_xy(CONFIG.HEIGHT,
+                            CONFIG.WIDTH,
+                            self.x + CONFIG.TARGET.SIZE,
+                            self.y)),
             color=CONFIG.COLORS.TARGET,
             thickness=1,
         )
@@ -82,8 +90,14 @@ class Target():
         # Vertical
         cv2.line(
             img=observation,
-            pt1=(get_cv2_xy(self.x, self.y + CONFIG.TARGET.SIZE)),
-            pt2=(get_cv2_xy(self.x, self.y - CONFIG.TARGET.SIZE)),
+            pt1=(get_cv2_xy(CONFIG.HEIGHT,
+                            CONFIG.WIDTH,
+                            self.x,
+                            self.y + CONFIG.TARGET.SIZE)),
+            pt2=(get_cv2_xy(CONFIG.HEIGHT,
+                            CONFIG.WIDTH,
+                            self.x,
+                            self.y - CONFIG.TARGET.SIZE)),
             color=CONFIG.COLORS.TARGET,
             thickness=1,
         )

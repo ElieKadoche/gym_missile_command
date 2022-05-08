@@ -1,23 +1,19 @@
 """Environment usage for a human."""
 
-import contextlib
 import sys
 
 import gym
-
-# Import Pygame and remove welcome message
-with contextlib.redirect_stdout(None):
-    import pygame
+import pygame
 
 # Number of time step to wait before the user can send a new missile
 STOP_FIRE_WAIT = 57
 
 if __name__ == "__main__":
     # Create the environment
-    env = gym.make("gym_missile_command:missile-command-v0")
+    env = gym.make("missile-command-v0")
 
     # Reset it
-    observation = env.reset()
+    observation = env.reset(seed=None)
 
     # Initialize PyGame
     env.render()
