@@ -32,11 +32,9 @@ The installation is done with the following commands.
 git clone https://github.com/ElieKadoche/gym_missile_command.git
 pip install -e ./gym_missile_command
 ```
-Usage
+Examples
 ------------------------------------------
 
-2 examples are given.
-To use them, use the following commands.
 For a human to play, commands are: arrow keys to move the target and space to fire a missile.
 
 ```shell
@@ -44,28 +42,34 @@ python -m gym_missile_command.examples.random_agent  # For a random agent to pla
 python -m gym_missile_command.examples.human_agent  # For a human to play
 ```
 
-Configuration
+Usage
 ------------------------------------------
 
-When creating a Missile Command environment, one can create a custom configuration.
-The object `custom_config` is a dictionary containing a custom configuration.
-Keys are the attributes and values are... Well, the custom values.
-To see the whole customizable configuration, see [./gym_missile_command/config.py](./gym_missile_command/config.py).
-To use the default configuration, you can just omit the `custom_config` argument.
-Below is an example.
+To see the whole customizable configuration, see [./gym_missile_command/config/config.py](./gym_missile_command/config/config.py).
 
 ```python
 import gym
 
 # Custom configuration, empty for no changes
-custom_config = {"ENEMY_MISSILES.NUMBER": 42,
-                 "FRIENDLY_MISSILES.EXPLOSION_RADIUS": 17}
+env_context = {"ENEMY_MISSILES.NUMBER": 42,
+               "FRIENDLY_MISSILES.EXPLOSION_RADIUS": 17}
 
 # Create the environment
-env = gym.make("gym_missile_command:missile-command-v0",
-               custom_config=custom_config)
+env = gym.make("missile-command-v0", env_context=env_context)
+
+# Reset it
+observation = env.reset(seed=None)
+
+# While the episode is not finished
+done = False
+while not done:
+
+    # Select an action (here, a random one)
+    action = env.action_space.sample()
+
+    # One step forward
+    observation, reward, done, _ = env.step(action)
+
+    # Render (or not) the environment
+    env.render()
 ```
-
-## Authors
-
-- Elie KADOCHE.
