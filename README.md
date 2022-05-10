@@ -29,8 +29,7 @@ Installation
 The installation is done with the following commands.
 
 ```shell
-git clone https://github.com/ElieKadoche/gym_missile_command.git
-pip install -e ./gym_missile_command
+pip install git+https://github.com/ElieKadoche/gym_missile_command.git@main
 ```
 Examples
 ------------------------------------------
@@ -49,6 +48,8 @@ To see the whole customizable configuration, see [./gym_missile_command/config/c
 
 ```python
 import gym
+
+import gym_missile_command
 
 # Custom configuration, empty for no changes
 env_context = {"ENEMY_MISSILES.NUMBER": 42,

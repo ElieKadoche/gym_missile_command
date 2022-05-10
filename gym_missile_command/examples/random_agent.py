@@ -2,6 +2,8 @@
 
 import gym
 
+import gym_missile_command
+
 if __name__ == "__main__":
     # Create the environment
     env = gym.make("missile-command-v0")

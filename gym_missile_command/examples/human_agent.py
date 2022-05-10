@@ -5,6 +5,8 @@ import sys
 import gym
 import pygame
 
+import gym_missile_command
+
 # Number of time step to wait before the user can send a new missile
 STOP_FIRE_WAIT = 57
 
