@@ -29,7 +29,8 @@ Installation
 The installation is done with the following commands.
 
 ```shell
-pip install git+https://github.com/ElieKadoche/gym_missile_command.git@main
+git clone https://github.com/ElieKadoche/gym_missile_command.git
+pip install -e ./gym_missile_command
 ```
 Examples
 ------------------------------------------
