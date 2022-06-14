@@ -74,4 +74,7 @@ while not done:
 
     # Render (or not) the environment
     env.render()
+
+# Close the environment
+env.close()
 ```
