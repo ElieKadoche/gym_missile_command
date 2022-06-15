@@ -25,10 +25,10 @@ def update_config(env_context):
     Args:
         env_context (dict): environment configuration.
     """
-    # For each custom attributes
+    # For each custom parameter
     for key, value in env_context.items():
 
-        # Check if attributes is valid
+        # Check if parameter is valid
         try:
             _ = _rgetattr(CONFIG, key)
         except AttributeError as e:
