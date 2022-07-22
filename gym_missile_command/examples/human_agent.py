@@ -1,4 +1,4 @@
-"""Environment usage for a human."""
+"""Human agent."""
 
 import sys
 

@@ -3,7 +3,7 @@
 import functools
 import sys
 
-from gym_missile_command.config import CONFIG
+from gym_missile_command.configuration import CONFIG
 
 
 def _rgetattr(obj, attr, *args):
@@ -27,6 +27,9 @@ def update_config(env_context):
     """
     # For each custom parameter
     for key, value in env_context.items():
+
+        # Be robust to case
+        key = key.upper()
 
         # Check if parameter is valid
         try:

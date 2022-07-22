@@ -45,14 +45,12 @@ python -m gym_missile_command.examples.human_agent  # For a human to play
 Usage
 ------------------------------------------
 
-To see the whole customizable configuration, see [./gym_missile_command/config/config.py](./gym_missile_command/config/config.py).
-
 ```python
 import gym
 
 import gym_missile_command
 
-# Custom configuration, empty for no changes
+# Environment configuration (see CONFIG.md)
 env_context = {"ENEMY_MISSILES.NUMBER": 42,
                "FRIENDLY_MISSILES.EXPLOSION_RADIUS": 17}
 

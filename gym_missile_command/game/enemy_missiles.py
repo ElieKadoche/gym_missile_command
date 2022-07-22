@@ -5,7 +5,7 @@ from random import Random
 import cv2
 import numpy as np
 
-from gym_missile_command.config import CONFIG
+from gym_missile_command.configuration import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -39,11 +39,13 @@ class EnemyMissiles():
         # ------------------------------------------
 
         # Initial position
-        x0 = self._rng_python.uniform(-0.5 * CONFIG.WIDTH, 0.5 * CONFIG.WIDTH)
-        y0 = CONFIG.HEIGHT
+        x0 = self._rng_python.uniform(
+            -0.5 * CONFIG.EPISODE.WIDTH, 0.5 * CONFIG.EPISODE.WIDTH)
+        y0 = CONFIG.EPISODE.HEIGHT
 
         # Final position
-        x1 = self._rng_python.uniform(-0.5 * CONFIG.WIDTH, 0.5 * CONFIG.WIDTH)
+        x1 = self._rng_python.uniform(
+            -0.5 * CONFIG.EPISODE.WIDTH, 0.5 * CONFIG.EPISODE.WIDTH)
         y1 = 0.0
 
         # Compute speed vectors
@@ -66,7 +68,7 @@ class EnemyMissiles():
         # Create the missile
         new_missile = np.array(
             [[x0, y0, x0, y0, x1, y1, vx, vy]],
-            dtype=CONFIG.DTYPE,
+            dtype=np.float32,
         )
 
         # Add it to the others
@@ -86,7 +88,7 @@ class EnemyMissiles():
         Args:
             seed (int): seed for reproducibility.
         """
-        self.enemy_missiles = np.zeros((0, 8), dtype=CONFIG.DTYPE)
+        self.enemy_missiles = np.zeros((0, 8), dtype=np.float32)
         self.nb_missiles_launched = 0
 
         # Create random numbers generator
@@ -180,15 +182,24 @@ class EnemyMissiles():
                                 self.enemy_missiles[:, 3]):
             cv2.line(
                 img=observation,
-                pt1=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x0, y0)),
-                pt2=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
+                pt1=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                                CONFIG.EPISODE.WIDTH,
+                                x0,
+                                y0)),
+                pt2=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                                CONFIG.EPISODE.WIDTH,
+                                x,
+                                y)),
                 color=CONFIG.COLORS.ENEMY_MISSILE,
                 thickness=1,
             )
 
             cv2.circle(
                 img=observation,
-                center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
+                center=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                                   CONFIG.EPISODE.WIDTH,
+                                   x,
+                                   y)),
                 radius=int(CONFIG.ENEMY_MISSILES.RADIUS),
                 color=CONFIG.COLORS.ENEMY_MISSILE,
                 thickness=-1,

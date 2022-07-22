@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 
-from gym_missile_command.config import CONFIG
+from gym_missile_command.configuration import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -22,7 +22,7 @@ class Batteries():
 
     def __init__(self):
         """Initialize 1 battery."""
-        self.batteries = np.zeros((self.NB_BATTERIES, 1), dtype=CONFIG.DTYPE)
+        self.batteries = np.zeros((self.NB_BATTERIES, 1), dtype=np.float32)
 
     def reset(self, seed=None):
         """Reset batteries.
@@ -79,7 +79,10 @@ class Batteries():
         """
         cv2.circle(
             img=observation,
-            center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, 0.0, 0.0)),
+            center=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                               CONFIG.EPISODE.WIDTH,
+                               0.0,
+                               0.0)),
             radius=int(CONFIG.BATTERY.RADIUS),
             color=CONFIG.COLORS.BATTERY,
             thickness=-1,

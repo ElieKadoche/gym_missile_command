@@ -1,10 +1,14 @@
-"""Environment usage for a machine."""
+"""Random agent."""
 
 import gym
 
 import gym_missile_command
 
 if __name__ == "__main__":
+    # Environment configuration (see CONFIG.md)
+    env_context = {"ENEMY_MISSILES.NUMBER": 42,
+                   "FRIENDLY_MISSILES.EXPLOSION_RADIUS": 17}
+
     # Create the environment
     env = gym.make("missile-command-v0")
 

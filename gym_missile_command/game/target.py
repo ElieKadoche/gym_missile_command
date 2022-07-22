@@ -2,7 +2,7 @@
 
 import cv2
 
-from gym_missile_command.config import CONFIG
+from gym_missile_command.configuration import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -29,7 +29,7 @@ class Target():
             seed (int): seed for reproducibility.
         """
         self.x = 0.0
-        self.y = CONFIG.HEIGHT / 2
+        self.y = CONFIG.EPISODE.HEIGHT / 2
 
     def step(self, action):
         """Go from current step to next one.
@@ -48,16 +48,16 @@ class Target():
             info: None.
         """
         if action == 1:
-            self.y = min(CONFIG.HEIGHT, self.y + CONFIG.TARGET.VY)
+            self.y = min(CONFIG.EPISODE.HEIGHT, self.y + CONFIG.TARGET.VY)
 
         elif action == 2:
             self.y = max(0, self.y - CONFIG.TARGET.VY)
 
         elif action == 3:
-            self.x = max(-CONFIG.WIDTH / 2, self.x - CONFIG.TARGET.VX)
+            self.x = max(-CONFIG.EPISODE.WIDTH / 2, self.x - CONFIG.TARGET.VX)
 
         elif action == 4:
-            self.x = min(CONFIG.WIDTH / 2, self.x + CONFIG.TARGET.VX)
+            self.x = min(CONFIG.EPISODE.WIDTH / 2, self.x + CONFIG.TARGET.VX)
 
         return None, None, None, None
 
@@ -75,12 +75,12 @@ class Target():
         # Horizontal
         cv2.line(
             img=observation,
-            pt1=(get_cv2_xy(CONFIG.HEIGHT,
-                            CONFIG.WIDTH,
+            pt1=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                            CONFIG.EPISODE.WIDTH,
                             self.x - CONFIG.TARGET.SIZE,
                             self.y)),
-            pt2=(get_cv2_xy(CONFIG.HEIGHT,
-                            CONFIG.WIDTH,
+            pt2=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                            CONFIG.EPISODE.WIDTH,
                             self.x + CONFIG.TARGET.SIZE,
                             self.y)),
             color=CONFIG.COLORS.TARGET,
@@ -90,12 +90,12 @@ class Target():
         # Vertical
         cv2.line(
             img=observation,
-            pt1=(get_cv2_xy(CONFIG.HEIGHT,
-                            CONFIG.WIDTH,
+            pt1=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                            CONFIG.EPISODE.WIDTH,
                             self.x,
                             self.y + CONFIG.TARGET.SIZE)),
-            pt2=(get_cv2_xy(CONFIG.HEIGHT,
-                            CONFIG.WIDTH,
+            pt2=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                            CONFIG.EPISODE.WIDTH,
                             self.x,
                             self.y - CONFIG.TARGET.SIZE)),
             color=CONFIG.COLORS.TARGET,

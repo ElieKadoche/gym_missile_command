@@ -6,7 +6,7 @@ import numpy as np
 import pygame
 from gym import spaces
 
-from gym_missile_command.config import CONFIG, update_config
+from gym_missile_command.configuration import CONFIG, update_config
 from gym_missile_command.game.batteries import Batteries
 from gym_missile_command.game.cities import Cities
 from gym_missile_command.game.enemy_missiles import EnemyMissiles
@@ -31,9 +31,9 @@ class MissileCommandEnv(gym.Env):
         enemy_missiles (EnemyMissiles): EnemyMissiles game object.
         friendly_missiles (FriendlyMissiles): FriendlyMissiles game object.
 
-        observation (numpy.array): of size (CONFIG.WIDTH, CONFIG.HEIGHT, 3).
-            The observation of the current time step, representing the RGB
-            values of each pixel.
+        observation (numpy.array): of size (CONFIG.EPISODE.WIDTH,
+            CONFIG.EPISODE.HEIGHT, 3). The observation of the current time]
+            step, representing the RGB values of each pixel.
         reward (float): reward of the current time step.
         reward_total (float): reward sum from first time step to current one.
         time_step (int): current time step, starts from 0.
@@ -167,7 +167,7 @@ class MissileCommandEnv(gym.Env):
         """Compute observation."""
         # Reset observation
         self.observation = np.zeros(
-            (CONFIG.WIDTH, CONFIG.HEIGHT, 3), dtype=np.uint8)
+            (CONFIG.EPISODE.WIDTH, CONFIG.EPISODE.HEIGHT, 3), dtype=np.uint8)
         self.observation[:, :, 0] = CONFIG.COLORS.BACKGROUND[0]
         self.observation[:, :, 1] = CONFIG.COLORS.BACKGROUND[1]
         self.observation[:, :, 2] = CONFIG.COLORS.BACKGROUND[2]
@@ -199,7 +199,7 @@ class MissileCommandEnv(gym.Env):
             (CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH),
             interpolation=cv2.INTER_AREA,
         )
-        return processed_observation.astype(CONFIG.DTYPE)
+        return processed_observation.astype(np.float32)
 
     def reset(self, seed=None):
         """Reset the environment.
@@ -284,7 +284,7 @@ class MissileCommandEnv(gym.Env):
                 and "processed_observation".
         """
         # Get width and height
-        w, h = CONFIG.WIDTH, CONFIG.HEIGHT
+        w, h = CONFIG.EPISODE.WIDTH, CONFIG.EPISODE.HEIGHT
 
         # Initialize PyGame
         if self._display is None:
@@ -310,7 +310,7 @@ class MissileCommandEnv(gym.Env):
         pygame.display.update()
 
         # Limit max FPS
-        self._clock.tick(CONFIG.FPS)
+        self._clock.tick(CONFIG.EPISODE.FPS)
 
     def close(self):
         """Close the environment."""

@@ -1,0 +1,2 @@
+from gym_missile_command.configuration.config import CONFIG
+from gym_missile_command.configuration.parser import update_config

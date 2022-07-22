@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 
-from gym_missile_command.config import CONFIG
+from gym_missile_command.configuration import CONFIG
 from gym_missile_command.utils import get_cv2_xy
 
 
@@ -78,7 +78,7 @@ class FriendlyMissiles():
         # Create the missile
         new_missile = np.array(
             [[self.ORIGIN_X, self.ORIGIN_Y, target.x, target.y, vx, vy]],
-            dtype=CONFIG.DTYPE,
+            dtype=np.float32,
         )
 
         # Add it to the others
@@ -95,8 +95,8 @@ class FriendlyMissiles():
         Args:
             seed (int): seed for reproducibility.
         """
-        self.missiles_movement = np.zeros((0, 6), dtype=CONFIG.DTYPE)
-        self.missiles_explosion = np.zeros((0, 3), dtype=CONFIG.DTYPE)
+        self.missiles_movement = np.zeros((0, 6), dtype=np.float32)
+        self.missiles_explosion = np.zeros((0, 3), dtype=np.float32)
 
     def step(self, action):
         """Go from current step to next one.
@@ -181,7 +181,7 @@ class FriendlyMissiles():
             # Create new ones
             new_exploding_missiles = np.zeros(
                 (nb_new_exploding_missiles, 3),
-                dtype=CONFIG.DTYPE,
+                dtype=np.float32,
             )
 
             # Affect positions
@@ -220,15 +220,24 @@ class FriendlyMissiles():
                         self.missiles_movement[:, 1]):
             cv2.line(
                 img=observation,
-                pt1=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, 0.0, 0.0)),
-                pt2=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
+                pt1=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                                CONFIG.EPISODE.WIDTH,
+                                0.0,
+                                0.0)),
+                pt2=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                                CONFIG.EPISODE.WIDTH,
+                                x,
+                                y)),
                 color=CONFIG.COLORS.FRIENDLY_MISSILE,
                 thickness=1,
             )
 
             cv2.circle(
                 img=observation,
-                center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
+                center=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                                   CONFIG.EPISODE.WIDTH,
+                                   x,
+                                   y)),
                 radius=int(CONFIG.FRIENDLY_MISSILES.RADIUS),
                 color=CONFIG.COLORS.FRIENDLY_MISSILE,
                 thickness=-1,
@@ -242,7 +251,10 @@ class FriendlyMissiles():
                                    self.missiles_explosion[:, 2]):
             cv2.circle(
                 img=observation,
-                center=(get_cv2_xy(CONFIG.HEIGHT, CONFIG.WIDTH, x, y)),
+                center=(get_cv2_xy(CONFIG.EPISODE.HEIGHT,
+                                   CONFIG.EPISODE.WIDTH,
+                                   x,
+                                   y)),
                 radius=int(explosion),
                 color=CONFIG.COLORS.EXPLOSION,
                 thickness=-1,
