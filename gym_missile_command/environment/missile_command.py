@@ -45,10 +45,7 @@ class MissileCommandEnv(gym.Env):
         """Initialize environment.
 
         Args:
-            env_context (dict): optional, custom configuration dictionary
-                with configuration attributes (strings) as keys (e.g.,
-                "FRIENDLY_MISSILES.NUMBER") and values as... Well, values (for
-                example 42).
+            env_context (dict): environment configuration.
         """
         super(MissileCommandEnv, self).__init__()
 
