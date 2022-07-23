@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="gym_missile_command",
-    version="1.2",
+    version="1.3",
     author="Elie KADOCHE",
     author_email="eliekadoche78@gmail.com",
     install_requires=["gym", "numpy", "opencv-python", "pygame"],
