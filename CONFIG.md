@@ -67,14 +67,21 @@ Radius of a city object.
 
 ### Colors
 
-`"COLORS.BACKGROUND"`
-`"COLORS.BATTERY"`
-`"COLORS.CITY"`
-`"COLORS.ENEMY_MISSILE"`
-`"COLORS.EXPLOSION"`
-`"COLORS.FRIENDLY_MISSILE"`
-`"COLORS.TARGET"`
 Colors of each object for the rendering function.
+
+`"COLORS.BACKGROUND"`
+
+`"COLORS.BATTERY"`
+
+`"COLORS.CITY"`
+
+`"COLORS.ENEMY_MISSILE"`
+
+`"COLORS.EXPLOSION"`
+
+`"COLORS.FRIENDLY_MISSILE"`
+
+`"COLORS.TARGET"`
 
 ### Enemy missiles
 
