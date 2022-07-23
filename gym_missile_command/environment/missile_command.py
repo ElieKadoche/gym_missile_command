@@ -47,8 +47,6 @@ class MissileCommandEnv(gym.Env):
         Args:
             env_context (dict): environment configuration.
         """
-        super(MissileCommandEnv, self).__init__()
-
         # Update configuration
         if env_context is not None:
             update_config(env_context)
