@@ -10,7 +10,7 @@ if __name__ == "__main__":
                    "FRIENDLY_MISSILES.EXPLOSION_RADIUS": 17}
 
     # Create the environment
-    env = gym.make("missile-command-v0")
+    env = gym.make("missile-command-v0", env_context=env_context)
 
     # Reset it
     observation = env.reset(seed=None)
