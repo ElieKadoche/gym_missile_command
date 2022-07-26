@@ -35,7 +35,7 @@ def update_config(env_context):
         try:
             _ = _rgetattr(CONFIG, key)
         except AttributeError as e:
-            print("Invalid custom configuration: {}".format(e))
+            print("Invalid custom configuration: {}.".format(e))
             sys.exit(1)
 
         # Modify it
