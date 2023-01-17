@@ -2,7 +2,7 @@
 
 import sys
 
-import gym
+import gymnasium as gym
 import pygame
 
 import gym_missile_command
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     env = gym.make("missile-command-v0")
 
     # Reset it
-    observation = env.reset(seed=None)
+    observation, _ = env.reset(seed=None)
 
     # Initialize PyGame
     env.render()
@@ -27,8 +27,8 @@ if __name__ == "__main__":
     stop_fire = 0
 
     # While the episode is not finished
-    done = False
-    while not done:
+    terminated = False
+    while not terminated:
 
         # Check if user exits
         for event in pygame.event.get():
@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
         if not pause:
             # One step forward
-            observation, reward, done, _ = env.step(action)
+            observation, reward, terminated, _, _ = env.step(action)
 
             # Render (or not) the environment
             env.render()

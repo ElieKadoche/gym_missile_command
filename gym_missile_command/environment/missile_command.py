@@ -1,10 +1,10 @@
 """Main environment class."""
 
 import cv2
-import gym
+import gymnasium as gym
 import numpy as np
 import pygame
-from gym import spaces
+from gymnasium import spaces
 
 from gym_missile_command.configuration import CONFIG, update_config
 from gym_missile_command.game.batteries import Batteries
@@ -194,16 +194,20 @@ class MissileCommandEnv(gym.Env):
             (CONFIG.OBSERVATION.HEIGHT, CONFIG.OBSERVATION.WIDTH),
             interpolation=cv2.INTER_AREA,
         )
-        return processed_observation.astype(np.float32)
 
-    def reset(self, seed=None):
+        return processed_observation
+
+    def reset(self, seed=None, options=None):
         """Reset the environment.
 
         Args:
             seed (int): seed for reproducibility.
+            options (dict): additional information.
 
         Returns:
             observation (numpy.array): the processed observation.
+
+            info (dict): auxiliary diagnostic information.
         """
         # Reset time step and rewards
         self.time_step = 0
@@ -220,7 +224,7 @@ class MissileCommandEnv(gym.Env):
         # Compute observation
         self._compute_observation()
 
-        return self._process_observation()
+        return self._process_observation(), {}
 
     def step(self, action):
         """Go from current step to next one.
@@ -233,7 +237,9 @@ class MissileCommandEnv(gym.Env):
 
             reward (float): reward of the current time step.
 
-            done (bool): True if the episode is finished, False otherwise.
+            terminated (bool): whether a terminal state is reached.
+
+            truncated (bool): whether a truncation condition is reached.
 
             info (dict): additional information on the current time step.
         """
@@ -257,7 +263,7 @@ class MissileCommandEnv(gym.Env):
         self._collisions_cities()
 
         # Check if episode is finished
-        done = done_cities or done_enemy_missiles
+        terminated = done_cities or done_enemy_missiles
 
         # Compute observation
         self._compute_observation()
@@ -266,7 +272,7 @@ class MissileCommandEnv(gym.Env):
         self.time_step += 1
         self.reward_total += self.reward
 
-        return self._process_observation(), self.reward, done, {}
+        return self._process_observation(), self.reward, terminated, False, {}
 
     def render(self, mode="raw_observation"):
         """Render the environment.
@@ -293,7 +299,7 @@ class MissileCommandEnv(gym.Env):
         if mode == "processed_observation":
             observation = self._process_observation()
             surface = pygame.surfarray.make_surface(observation)
-            surface = pygame.transform.scale(surface, (h, w))
+            surface = pygame.transform.scale(surface, (w, h))
 
         # Normal mode
         else:
