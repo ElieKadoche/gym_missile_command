@@ -2,7 +2,7 @@
 
 import sys
 
-import gym
+import gymnasium as gym
 import pygame
 
 import gym_missile_command

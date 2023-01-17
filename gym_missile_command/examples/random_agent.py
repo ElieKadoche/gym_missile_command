@@ -1,6 +1,6 @@
 """Random agent."""
 
-import gym
+import gymnasium as gym
 
 import gym_missile_command
 

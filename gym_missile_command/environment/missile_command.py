@@ -1,10 +1,10 @@
 """Main environment class."""
 
 import cv2
-import gym
+import gymnasium as gym
 import numpy as np
 import pygame
-from gym import spaces
+from gymnasium import spaces
 
 from gym_missile_command.configuration import CONFIG, update_config
 from gym_missile_command.game.batteries import Batteries

@@ -46,7 +46,7 @@ Usage
 ------------------------------------------
 
 ```python
-import gym
+import gymnasium as gym
 
 import gym_missile_command
 
