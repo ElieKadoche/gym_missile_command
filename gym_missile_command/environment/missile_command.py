@@ -196,14 +196,17 @@ class MissileCommandEnv(gym.Env):
         )
         return processed_observation.astype(np.float32)
 
-    def reset(self, seed=None):
+    def reset(self, seed=None, options=None):
         """Reset the environment.
 
         Args:
             seed (int): seed for reproducibility.
+            options (dict): additional information.
 
         Returns:
             observation (numpy.array): the processed observation.
+
+            info (dict): auxiliary diagnostic information.
         """
         # Reset time step and rewards
         self.time_step = 0
@@ -220,7 +223,7 @@ class MissileCommandEnv(gym.Env):
         # Compute observation
         self._compute_observation()
 
-        return self._process_observation()
+        return self._process_observation(), {}
 
     def step(self, action):
         """Go from current step to next one.
@@ -233,7 +236,9 @@ class MissileCommandEnv(gym.Env):
 
             reward (float): reward of the current time step.
 
-            done (bool): True if the episode is finished, False otherwise.
+            terminated (bool): whether a terminal state is reached.
+
+            truncated (bool): whether a truncation condition is reached.
 
             info (dict): additional information on the current time step.
         """
@@ -257,7 +262,7 @@ class MissileCommandEnv(gym.Env):
         self._collisions_cities()
 
         # Check if episode is finished
-        done = done_cities or done_enemy_missiles
+        terminated = done_cities or done_enemy_missiles
 
         # Compute observation
         self._compute_observation()
@@ -266,7 +271,7 @@ class MissileCommandEnv(gym.Env):
         self.time_step += 1
         self.reward_total += self.reward
 
-        return self._process_observation(), self.reward, done, {}
+        return self._process_observation(), self.reward, terminated, False, {}
 
     def render(self, mode="raw_observation"):
         """Render the environment.

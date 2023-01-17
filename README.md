@@ -58,17 +58,17 @@ env_context = {"ENEMY_MISSILES.NUMBER": 42,
 env = gym.make("missile-command-v0", env_context=env_context)
 
 # Reset it
-observation = env.reset(seed=None)
+observation, info = env.reset(seed=None)
 
 # While the episode is not finished
-done = False
-while not done:
+terminated = False
+while not terminated:
 
     # Select an action (here, a random one)
     action = env.action_space.sample()
 
     # One step forward
-    observation, reward, done, _ = env.step(action)
+    observation, reward, terminated, truncated, info = env.step(action)
 
     # Render (or not) the environment
     env.render()
