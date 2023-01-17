@@ -299,7 +299,7 @@ class MissileCommandEnv(gym.Env):
         if mode == "processed_observation":
             observation = self._process_observation()
             surface = pygame.surfarray.make_surface(observation)
-            surface = pygame.transform.scale(surface, (h, w))
+            surface = pygame.transform.scale(surface, (w, h))
 
         # Normal mode
         else:
