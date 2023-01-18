@@ -22,8 +22,8 @@ class MissileCommandEnv(gym.Env):
             up, (2) target down, (3) target left, (4) target right, (5) fire
             missile.
 
-        action_space (gym.spaces.discrete.Discrete): OpenAI Gym action space.
-        observation_space (gym.spaces.Box): OpenAI Gym observation space.
+        action_space (gymnasim.spaces.discrete.Discrete): action space.
+        observation_space (gymnasium.spaces.Box): observation space.
         reward_range (tuple): reward range.
 
         batteries (Batteries): Batteries game object.
